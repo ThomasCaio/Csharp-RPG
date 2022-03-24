@@ -5,10 +5,22 @@ using Items.Factory;
 using Views;
 using Places;
 
+
+class Program {
+    public static void Main(string[] args) {
+        if (args.Contains("--test")) {
+            Test.Run();
+        }
+        else {
+            Build.Run();
+        }
+    }
+}
+
 public class Test
 {
     public static void Run() {
-        Build.Run();
+        Game g = new Game();
     }
 }
 

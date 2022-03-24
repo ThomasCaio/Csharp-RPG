@@ -1,0 +1,10 @@
+using Entities;
+namespace Monsters.All;
+public class Rat : Monster {
+    public Rat() : base("Rat") {
+        MaxHealth = 20;
+        BaseDamage = 2;
+        Passives.Add(new Poison());
+        DropExp = 2;
+    }
+}

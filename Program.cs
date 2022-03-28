@@ -21,12 +21,23 @@ public class Test
 {
     public static void Run() {
         Game g = new Game();
+        System.Console.WriteLine("DEBUG Mode");
+        g.Debug = true;
+        g.Run();
+    }
+
+    public static void PlayerTest(Character player) {
+            player.Inventory.Add(new DemonSword());
+            player.Equip(player.Inventory.Get(1));
+            player.Scores.Add("Forest", 150);
+            player.Gold = 10;
     }
 }
 
 public static class Build {
     public static void Run() {
         Game g = new Game();
+        g.Run();
     }
 }
 
@@ -38,6 +49,7 @@ public class Game {
     public Dictionary<string, View> GameViews = new Dictionary<string, View>();
     public Dictionary<string, Place> Places = new Dictionary<string, Place>();
     public ItemFactory itemFactory;
+    public bool Debug = false;
 
     public Game() {
         Player = null;
@@ -58,22 +70,19 @@ public class Game {
 
         // Item Manager
         itemFactory = new ItemFactory(this);
-
-
-        Setup();
     }
 
-    public void PlayerSetUp() {
+    public void PlayerSetUp(Action<Character> func) {
         if (Player != null){
-            itemFactory.New(Player.Inventory, "Demon Sword");
-            Player.Equip(Player.Inventory.Get(0));
-            Player.Inventory.Add(new ShortSword());
-            Player.Scores.Add("Forest", 150);
-            Player.Gold = 10;
+            func(Player);
         }
     }
 
-    public void Setup() {
+    public void Run() {
         GameViews["Menu"].Render();
+
+    }
+
+    public void Setup() {
     }
 }

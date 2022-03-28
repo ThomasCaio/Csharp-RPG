@@ -68,7 +68,14 @@ public class MenuView : View {
             }
         }
         Parent.Player = new Entities.Character(CharacterName);
-        Parent.PlayerSetUp();
+        if (Parent.Debug) {
+            Parent.PlayerSetUp(Test.PlayerTest);
+        }
+        else {
+            Parent.PlayerSetUp(p => {
+                p.Inventory.Add(new Items.All.ShortSword());
+            });
+        }
         Parent.GameViews["Game"].Render();
     }
 }

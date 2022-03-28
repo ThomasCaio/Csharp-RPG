@@ -3,13 +3,12 @@ using Entities;
 using Spells;
 
 public class DamageSet {
+    public Dictionary<Element, double> _damages = new Dictionary<Element, double>();
 
     public DamageSet(double value) : this(value, Element.Physical) {}
     public DamageSet(double value, Element element) {
         SetElement(value, element);
     }
-
-    public Dictionary<Element, double> _damages = new Dictionary<Element, double>();
     public double TotalDamage() {
         double Dmg = 0;
         foreach (double d in _damages.Values) {
@@ -69,7 +68,7 @@ public static class Combat {
     }
 
     public static void Cast(Creature source, Creature target, Spell spell) {
-
+        spell.Cast(source, target, new DamageSet(0, Element.Magical));
     }
 }
 

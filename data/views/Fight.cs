@@ -105,7 +105,7 @@ public class FightView : View {
             var target = SelectTarget(player, MonsterParty);
             Combat.Attack(player, target);
         } else if (option == "Cast") {
-            // TODO: Cast Spells.
+            Spell spell = SelectSpell();
         } else if (option == "Inventory") {
             var view = (InventoryView)Parent.GameViews["Inventory"];
             view.Render();
@@ -177,5 +177,13 @@ public class FightView : View {
         string option = AnsiConsole.Prompt(options);
         var target = option[1] - '1';
         return monsters[target];
+    }
+
+    public Spell? SelectSpell(Creature creature) {
+        var player = (Character)creature;
+        foreach (Spell spell in player.Spellbook()) {
+
+        }
+        return null;
     }
 }

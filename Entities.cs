@@ -74,12 +74,11 @@ public abstract class Creature{
         if (Effects.Count == 1) {
             return Effects[0].ToString();
         }
-        string list = "[";
-        foreach (int i in Range(1, Effects.Count)) {
-            Effect effect = Effects[i-1];
+        string list = "";
+        foreach (int i in Range(0, Effects.Count)) {
+            Effect effect = Effects[i];
             list += $"{effect.ToString()}, ";
         }
-        list += $"{Effects.Last()}";
         return list;
     }
 }
@@ -112,6 +111,8 @@ public class Character : Creature
 {
     public double NextLevel = 100;
     public double _experience = 0;
+
+    public List<Spell> Spellbook = new List<Spell>();
     public double Experience {
         get{return Convert.ToInt32(_experience);}
         set{

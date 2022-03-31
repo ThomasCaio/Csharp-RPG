@@ -38,6 +38,11 @@ public abstract class Spell {
     public virtual void PostAction(Creature source, Creature target, DamageSet damage) {}
 }
 
+public class BlankSpell : Spell {
+    public BlankSpell(string name) : base(name) {}
+    public override void Action(Creature source, Creature target, DamageSet damage) {}
+}
+
 public enum PassiveType {
     OnHit,
     OnKill,

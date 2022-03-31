@@ -68,8 +68,8 @@ public class MenuView : View {
             }
         }
         Parent.Player = new Entities.Character(CharacterName);
-        if (Parent.Debug) {
-            Parent.PlayerSetUp(Test.PlayerTest);
+        if (Parent.Debug && Parent.gSetup != null) {
+            Parent.gSetup(Parent.Player, Parent);
         }
         else {
             Parent.PlayerSetUp(p => {

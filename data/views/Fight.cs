@@ -105,7 +105,14 @@ public class FightView : View {
             var target = SelectTarget(player, MonsterParty);
             Combat.Attack(player, target);
         } else if (option == "Cast") {
-            Spell spell = SelectSpell();
+            Spell spell = SelectSpell(player);
+            if (spell.Name == "Back") {
+                Options(MonsterParty, PlayerParty);
+            }
+            else {
+                var target = SelectTarget(player, MonsterParty);
+                Combat.Cast(player, target, spell);
+            }
         } else if (option == "Inventory") {
             var view = (InventoryView)Parent.GameViews["Inventory"];
             view.Render();
@@ -179,11 +186,14 @@ public class FightView : View {
         return monsters[target];
     }
 
-    public Spell? SelectSpell(Creature creature) {
+    public Spell SelectSpell(Creature creature) {
         var player = (Character)creature;
-        foreach (Spell spell in player.Spellbook()) {
-
+        var selection = new SelectionPrompt<Spell>().Title("Spellbook").UseConverter(s => s.Name);
+        foreach (Spell spell in player.Spellbook) {
+            selection.AddChoice(spell);
         }
-        return null;
+        selection.AddChoice(new BlankSpell("Back"));
+        var option = AnsiConsole.Prompt(selection);
+        return option;
     }
 }

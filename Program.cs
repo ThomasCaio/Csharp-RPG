@@ -20,17 +20,18 @@ class Program {
 public class Test
 {
     public static void Run() {
-        Game g = new Game();
+        Game g = new Game(TestSetup);
         System.Console.WriteLine("DEBUG Mode");
         g.Debug = true;
         g.Run();
     }
 
-    public static void PlayerTest(Character player) {
+    public static void TestSetup(Character player, Game game) {
             player.Inventory.Add(new DemonSword());
-            player.Equip(player.Inventory.Get(1));
+            player.Equip(player.Inventory.Get(0));
             player.Scores.Add("Forest", 150);
             player.Gold = 10;
+            player.Spellbook.Add(new Firebolt());
     }
 }
 
@@ -49,9 +50,13 @@ public class Game {
     public Dictionary<string, View> GameViews = new Dictionary<string, View>();
     public Dictionary<string, Place> Places = new Dictionary<string, Place>();
     public ItemFactory itemFactory;
+
+    public Action<Character, Game>? gSetup;
     public bool Debug = false;
 
-    public Game() {
+    public Game(Action<Character, Game>? func=null) {
+        gSetup = func;
+
         Player = null;
 
         // Register Views
@@ -77,12 +82,10 @@ public class Game {
             func(Player);
         }
     }
-
     public void Run() {
         GameViews["Menu"].Render();
 
     }
-
     public void Setup() {
     }
 }

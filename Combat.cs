@@ -43,6 +43,10 @@ public class Damage {
     public double Value;
     public Element Type;
 
+    public Damage(double value){
+        Value = value;
+        Type = Element.Physical;
+    }
     public Damage(double value, Element element) {
         Value = value;
         Type = element;

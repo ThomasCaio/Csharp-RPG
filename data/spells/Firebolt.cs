@@ -4,6 +4,12 @@ using CombatModule;
 
 public class Firebolt : Spell {
     public Firebolt() : base("Firebolt") {
+        BaseDamage = 5;
+    }
+
+    public override int CalculateDamage(Creature source)
+    {
+        return (int)Math.Round(source.MaxHealth * 0.1);
     }
 
     public override string SpellDescription() {

@@ -26,13 +26,13 @@ public class Test
         g.Run();
     }
 
-    public static void TestSetup(Character player, Game game) {
-            player.Name = "GOD " + player.Name;
-            player.Inventory.Add(new DemonSword());
-            player.Equip(player.Inventory.Get(0));
-            player.Scores.Add("Forest", 150);
-            player.Gold = 10;
-            player.Spellbook.Add(new Firebolt());
+    public static void TestSetup(Game game) {
+            game.Player!.Name = "Test " + game.Player!.Name;
+            game.Player!.Inventory.Add(new DemonSword());
+            game.Player!.Equip(game.Player.Inventory.Get(0));
+            game.Player!.Scores.Add("Forest", 150);
+            game.Player!.Gold = 10;
+            game.Player!.Spellbook.Add(new Firebolt());
     }
 }
 
@@ -52,10 +52,10 @@ public class Game {
     public Dictionary<string, Place> Places = new Dictionary<string, Place>();
     public ItemFactory itemFactory;
 
-    public Action<Character, Game>? gSetup;
+    public Action<Game>? gSetup;
     public bool Debug = false;
 
-    public Game(Action<Character, Game>? func=null) {
+    public Game(Action<Game>? func=null) {
         gSetup = func;
 
         Player = null;

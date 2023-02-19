@@ -24,12 +24,16 @@ public class MenuView : View {
         AnsiConsole.Write(g);
 
         char option = Console.ReadKey().KeyChar;
-        if (option == '1') {
+        if (option == '1')
+        {
             NewCharacter();
         }
-        else if (option == '2') {
+        else if (option == '2')
+        {
+            // TODO: Implement save/load files.
         }
-        else if (option == '3') {
+        else if (option == '3')
+        {
             AnsiConsole.Clear();
             if (!AnsiConsole.Confirm("Do you really want to leave?"))
             {

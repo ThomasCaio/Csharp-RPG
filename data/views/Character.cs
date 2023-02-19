@@ -33,6 +33,7 @@ public class CharacterView : View {
     }
 
     public void CharacterItems() {
+        AnsiConsole.Clear();
         var player = Parent.Player;
         if (player != null) {
             var options = new SelectionPrompt<Items.Item>().UseConverter(item => item.Title).Title("Equipped Items");

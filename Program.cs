@@ -4,12 +4,17 @@ using Items.All;
 using Items.Factory;
 using Views;
 using Places;
+using FileModule;
 
 
 class Program {
     public static void Main(string[] args) {
         if (args.Contains("--test")) {
             Test.Run();
+        }
+        else if (args.Contains("--debug"))
+        {
+            Debug.Run();
         }
         else {
             Build.Run();
@@ -18,6 +23,14 @@ class Program {
 }
 
 public class Test
+{
+    public static void Run()
+    {
+        FileModule.Test.Run();
+    }
+}
+
+public class Debug
 {
     public static void Run() {
         Game g = new Game(TestSetup);

@@ -79,13 +79,8 @@ public class MenuView : View {
             }
         }
         Parent.Player = new Entities.Character(CharacterName);
-        if (Parent.Debug && Parent.gSetup != null) {
+        if (Parent.gSetup != null) {
             Parent.gSetup(Parent);
-        }
-        else {
-            Parent.PlayerSetUp(p => {
-                p.Inventory.Add(new Items.All.ShortSword());
-            });
         }
         Parent.GameViews["Game"].Render();
     }

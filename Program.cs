@@ -51,8 +51,14 @@ public class Debug
 
 public static class Build {
     public static void Run() {
-        Game g = new Game();
+        Game g = new Game(DefaultSetup);
         g.Run();
+    }
+
+    public static void DefaultSetup(Game game)
+    {
+        game.Player!.Inventory.Add(new ShortSword());
+        game.Player!.Equip(game.Player!.Inventory.Get(0));
     }
 }
 

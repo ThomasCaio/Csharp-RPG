@@ -78,6 +78,7 @@ public abstract class Effect {
     public int Value;
 
     public Creature? Source;
+    [JsonIgnore]
     public Creature? Target;
 
     public EffectType Type;

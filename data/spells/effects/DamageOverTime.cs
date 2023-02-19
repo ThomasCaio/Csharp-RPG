@@ -17,7 +17,9 @@ public class DamageOverTime : Spells.Effect {
             AttackSystem.Hit(Source, Target, dmg, false, false);
             RPG.Game.Log.Add($"{Name} hits {Target.Name} in {dmg.TotalDamage()} damage.");
         } else {
-            // TODO: File .log to show output error.
+            DateTime now = DateTime.Now;
+            Directory.CreateDirectory("./logs");
+            File.AppendAllText("./logs/dot.log", $"{now} Class(DamageOverTime).Logic\n spell:{Name} S:{Source!.Name} T:{Target!.Name}");
         }
     }
 

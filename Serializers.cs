@@ -15,17 +15,6 @@ public static class Serializers
     public static Character DeCharacter(string text)
     {
         Character c = JsonConvert.DeserializeObject<Character>(text, new JsonSerializerSettings{ TypeNameHandling = TypeNameHandling.Auto });
-        System.Console.WriteLine((c));
         return c;
-    }
-}
-
-
-public class Test{
-    public static void Run(){
-        Character c = new Character("Demnok");
-        // Serializers.Character(c);
-        // Serializers.Deserialize();
-        FileModule.FileHandler.ListCharacters();
     }
 }

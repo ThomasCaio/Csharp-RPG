@@ -52,7 +52,7 @@ public class ShopView : View{
                 player.Gold -= item.Price;
             }
             else {
-                Log.AddEvent($"You have no gold to buy {item.Title}. It costs {item.Price} gold.");
+                Log.AddEvent($"You have no gold. It costs ${item.Price}.");
             }
         }
     }

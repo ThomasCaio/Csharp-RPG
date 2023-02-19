@@ -10,6 +10,7 @@ public class MenuView : View {
     }
 
     public override void Render() {
+        AnsiConsole.Clear();
         Grid g = new Grid();
 
         g.AddColumn(new GridColumn());
@@ -29,8 +30,14 @@ public class MenuView : View {
         else if (option == '2') {
         }
         else if (option == '3') {
+            AnsiConsole.Clear();
+            if (!AnsiConsole.Confirm("Do you really want to leave?"))
+            {
+                Render();
+            }
         }
         else {
+            Render();
         }
     }
 

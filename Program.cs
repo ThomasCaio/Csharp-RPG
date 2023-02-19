@@ -27,6 +27,7 @@ public class Test
     }
 
     public static void TestSetup(Character player, Game game) {
+            player.Name = "GOD " + player.Name;
             player.Inventory.Add(new DemonSword());
             player.Equip(player.Inventory.Get(0));
             player.Scores.Add("Forest", 150);

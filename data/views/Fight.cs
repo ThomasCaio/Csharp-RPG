@@ -101,22 +101,31 @@ public class FightView : View {
                 })
         );
 
-        if (option == "Attack!") {
+        if (option == "Attack!")
+        {
             var target = SelectTarget(player, MonsterParty);
             Combat.Attack(player, target);
-        } else if (option == "Cast") {
+        }
+        else if (option == "Cast")
+        {
             Spell spell = SelectSpell(player);
-            if (spell.Name == "Back") {
+            if (spell.Name == "Back")
+            {
                 Options(MonsterParty, PlayerParty);
             }
-            else {
+            else
+            {
                 var target = SelectTarget(player, MonsterParty);
                 Combat.Cast(player, target, spell);
             }
-        } else if (option == "Inventory") {
+        }
+        else if (option == "Inventory")
+        {
             var view = (InventoryView)Parent.GameViews["Inventory"];
             view.Render();
-        } else if (option == "Run") {
+        }
+        else if (option == "Run")
+        {
             MonsterTurn(MonsterParty, PlayerParty);
             EndTurn(MonsterParty, PlayerParty);
         }

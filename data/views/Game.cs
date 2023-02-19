@@ -45,7 +45,8 @@ public class GameView : View {
             } else if (option == "Shop") {
                 Parent.GameViews["Shop"].Render();
             } else if (option == "Save and exit game"){
-                FileModule.Serializers.Character(Parent.Player!);
+                FileModule.FileHandler.SaveCharacter(Parent.Player!);
+                Parent.GameViews["Menu"].Render();
                 return;
             };
 

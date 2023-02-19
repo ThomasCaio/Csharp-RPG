@@ -2,6 +2,7 @@ namespace Views;
 using RPG;
 using Spectre.Console;
 using System.Text.RegularExpressions;
+using FileModule;
 
 
 public class MenuView : View {
@@ -30,7 +31,8 @@ public class MenuView : View {
         }
         else if (option == '2')
         {
-            // TODO: Implement save/load files.
+            Load();
+            Render();
         }
         else if (option == '3')
         {
@@ -39,6 +41,7 @@ public class MenuView : View {
             {
                 Render();
             }
+            Environment.Exit(0);
         }
         else {
             Render();
@@ -46,9 +49,6 @@ public class MenuView : View {
     }
 
     public void NewCharacter() {
-        Grid grid = new Grid();
-        grid.AddColumn(new GridColumn());
-        grid.AddRow(new Markup("Type your [underline]character name[/]!"));
         Table t = new Table().HideHeaders();
         t.AddColumn(new TableColumn("Text"));
         t.AddRow(new Markup("Type your [underline]character name[/]!"));
@@ -87,6 +87,44 @@ public class MenuView : View {
                 p.Inventory.Add(new Items.All.ShortSword());
             });
         }
+        Parent.GameViews["Game"].Render();
+    }
+
+    public void Load()
+    {
+        AnsiConsole.Clear();
+        var characters = FileHandler.ListCharacters();
+        if (characters.Count() <= 0)
+        {
+            AnsiConsole.MarkupLine("No characters to load.");
+            AnsiConsole.WriteLine();
+            AnsiConsole.MarkupLine("[italic][grey]Press any key to continue.[/][/]");
+            Console.ReadKey();
+            return;
+        }
+        
+        List<string> marked_characters = new List<string>();
+        foreach (var c in characters)
+        {
+            var marked = c;
+            if (c.Contains("Test "))
+            {
+                var test = c.Substring(0, 4);
+                var name = c.Substring(5);
+
+                marked = $"[yellow]{test}[/] {name}";
+
+            }
+            marked_characters.Add(marked);
+        }
+        var prompt = new SelectionPrompt<string>()
+            .Title("Characters")
+            .MoreChoicesText("")
+            .AddChoices(marked_characters);
+        var character = AnsiConsole.Prompt(prompt);
+        int idx = marked_characters.IndexOf(character);
+        string selected_characater = characters[idx];
+        FileHandler.LoadCharacter(Parent, selected_characater);
         Parent.GameViews["Game"].Render();
     }
 }

@@ -1,13 +1,14 @@
 namespace Spells;
 using Entities;
 using CombatModule;
+using Newtonsoft.Json;
 
 public abstract class Spell {
     public string Name;
     public string Description {get => SpellDescription();}
 
+    [JsonIgnore]
     public Creature? Source = null;
-    public Creature? Target;
     public TargetType Area = TargetType.Single;
     public int BaseDamage = 0;
 
@@ -16,8 +17,6 @@ public abstract class Spell {
     }
 
     public void Cast(Creature source, Creature target, DamageSet damage) {
-        Source = source;
-        Target = target;
         PreAction(source, target, damage);
         Action(source, target, damage);
         PostAction(source, target, damage);

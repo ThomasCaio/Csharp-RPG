@@ -1,0 +1,47 @@
+{
+  "NextLevel": 100.0,
+  "_experience": 55.0,
+  "Spellbook": [
+    {
+      "$type": "Firebolt, RPG",
+      "Name": "Firebolt",
+      "Area": 0,
+      "BaseDamage": 5,
+      "Description": "You throw a fireball to an enemy, dealing 5 damage."
+    }
+  ],
+  "Level": 1,
+  "Gold": 32,
+  "Body": {
+    "Head": null,
+    "Chest": null,
+    "Legs": null,
+    "Boots": null,
+    "MainHand": {
+      "$type": "Items.All.DemonSword, RPG",
+      "BaseDamage": 50.0,
+      "PassiveSpells": [],
+      "Title": "Demon Sword",
+      "Type": 0,
+      "Slot": 4,
+      "Price": 10000
+    },
+    "OffHand": null
+  },
+  "Inventory": {
+    "Items": [],
+    "InventorySize": 20
+  },
+  "Scores": {
+    "Forest": 161
+  },
+  "Name": "Test rty",
+  "Type": 0,
+  "BaseDamage": 1.0,
+  "BaseDefense": 0.0,
+  "Passives": [],
+  "Effects": [],
+  "Experience": 55.0,
+  "Health": 8.0,
+  "MaxHealth": 100.0
+}

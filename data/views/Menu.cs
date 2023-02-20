@@ -15,7 +15,8 @@ public class MenuView : View {
         Grid g = new Grid();
 
         g.AddColumn(new GridColumn());
-        g.AddRow(new Markup("[red]RPG[/] Game TEST"));
+        string debug = Parent.Debug ? "[white][bold]DEBUG[/][/] " : "";
+        g.AddRow(new Markup($"{debug}{Parent.GameName}"));
         g.AddEmptyRow();
 
         g.AddRow("1: Create a new character.");
@@ -68,12 +69,21 @@ public class MenuView : View {
                     t.UpdateCell(4, 0, new Text("Error: Your name should have at least 3 characters."));
                     continue;
                 }
+                if (CharacterName.Count() > 20)
+                {
+                    t.UpdateCell(4, 0, new Text("Error: Your name should have a maximum of 20 characters."));
+                    continue;
+                }
                 if (!Regex.IsMatch(CharacterName, @"^[a-zA-Z]+$")) {
                     t.UpdateCell(4, 0, new Text("Error: Only letters allowed!"));
                     continue;
                 }
                 if (CharacterName != null) {
                     CharacterName.Trim();
+                    if (Parent.Debug)
+                    {
+                        CharacterName = "DEBUG " + CharacterName;
+                    }
                     break;
                 }
             }
@@ -102,12 +112,13 @@ public class MenuView : View {
         foreach (var c in characters)
         {
             var marked = c;
-            if (c.Contains("Test "))
+            if (Parent.Debug)
+            if (c.Contains("DEBUG "))
             {
-                var test = c.Substring(0, 4);
-                var name = c.Substring(5);
+                var debug = c.Substring(0, 5);
+                var name = c.Substring(6);
 
-                marked = $"[yellow]{test}[/] {name}";
+                marked = $"[white][bold]{debug}[/][/] {name}";
 
             }
             marked_characters.Add(marked);

@@ -34,24 +34,25 @@ public class Debug
 {
     public static void Run() {
         Game g = new Game(TestSetup);
-        System.Console.WriteLine("DEBUG Mode");
         g.Debug = true;
         g.Run();
     }
 
-    public static void TestSetup(Game game) {
-            game.Player!.Name = "Test " + game.Player!.Name;
-            game.Player!.Inventory.Add(new DemonSword());
-            game.Player!.Equip(game.Player.Inventory.Get(0));
-            game.Player!.Experience += 50000000;
-            game.Player!.Scores.Add("Forest", 150);
-            game.Player!.Gold = 10;
-            game.Player!.Spellbook.Add(new Firebolt());
+    public static void TestSetup(Game game)
+    {
+        game.Player!.Inventory.Add(new DemonSword());
+        game.Player!.Equip(game.Player.Inventory.Get(0));
+        game.Player!.Experience += 50000000;
+        game.Player!.Scores.Add("Forest", 150);
+        game.Player!.Gold = 10;
+        game.Player!.Spellbook.Add(new Firebolt());
     }
 }
 
-public static class Build {
-    public static void Run() {
+public static class Build
+{
+    public static void Run()
+    {
         Game g = new Game(DefaultSetup);
         g.Run();
     }
@@ -64,6 +65,7 @@ public static class Build {
 }
 
 public class Game {
+    public string GameName = "[yellow]C# RPG[/]";
     public Character? Player;
     public static List<string> Log = new List<string>();
     public static Random RNG = new Random();

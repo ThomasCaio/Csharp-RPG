@@ -43,6 +43,7 @@ public class Debug
             game.Player!.Name = "Test " + game.Player!.Name;
             game.Player!.Inventory.Add(new DemonSword());
             game.Player!.Equip(game.Player.Inventory.Get(0));
+            game.Player!.Experience += 50000000;
             game.Player!.Scores.Add("Forest", 150);
             game.Player!.Gold = 10;
             game.Player!.Spellbook.Add(new Firebolt());

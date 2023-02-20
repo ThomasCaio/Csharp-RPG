@@ -7,14 +7,13 @@ public class Firebolt : Spell {
         BaseDamage = 5;
     }
 
-    public override int CalculateDamage(Creature source)
+    public override int CalculateDamage(Creature? source)
     {
-        return (int)Math.Round(source.MaxHealth * 0.1);
+        return (Source != null) ? (int)Math.Round(source!.MaxHealth * 0.1) + BaseDamage : BaseDamage;
     }
 
     public override string SpellDescription() {
-        int damage = (Source != null) ? CalculateDamage(Source) + BaseDamage : BaseDamage;
-        return $"You throw a fireball to an enemy, dealing {damage} damage.";
+        return $"You throw a fireball to an enemy, dealing {Damage()} damage.";
     }
 
     public override void Action(Creature source, Creature target, DamageSet damage) {

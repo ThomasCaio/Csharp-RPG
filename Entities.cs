@@ -120,7 +120,7 @@ public class Character : Creature
                 value -= NextLevel;
                 LevelUP();
                 Game.Log.Add($"{this.Name} level up!");
-                NextLevel = NextLevel * 1.25;
+                NextLevel = (int)Math.Round(NextLevel * 1.25, 0);
             }
             _experience = value;
         }}

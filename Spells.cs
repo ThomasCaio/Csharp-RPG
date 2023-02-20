@@ -22,6 +22,11 @@ public abstract class Spell {
         PostAction(source, target, damage);
     }
 
+    public virtual int Damage()
+    {
+        return BaseDamage + CalculateDamage(Source!);
+    }
+
     public virtual int CalculateDamage(Creature source) {
         return 0;
     }

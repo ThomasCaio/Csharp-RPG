@@ -22,10 +22,16 @@ public class CharacterView : View {
             selection.AddChoice("Back");
             var option = AnsiConsole.Prompt(selection);
 
-            if (option == "Equipped items") {
+            if (option == "Equipped items")
+            {
                 CharacterItems();
             }
-            else if (option == "Back"){
+            else if (option == "Spellbook")
+            {
+                Spellbook();
+            }
+            else if (option == "Back")
+            {
                 return;
             }
         }
@@ -53,5 +59,32 @@ public class CharacterView : View {
             inventoryView.ItemOption(option);
         }
         CharacterItems();
+    }
+
+    public void Spellbook()
+    {
+        var spellbook = Parent.Player!.Spellbook;
+        if (spellbook.Count() <= 0)
+        {
+            AnsiConsole.MarkupLine("You have no spells yet.");
+            AnsiConsole.WriteLine();
+            AnsiConsole.MarkupLine("[gray][italic]Press any key to continue.[/][/]");
+            Console.ReadKey();
+            return;
+        }
+        var spells = new SelectionPrompt<Spells.Spell>().UseConverter(s => s.Name).Title("Spellbook").AddChoices(spellbook);
+        var option = AnsiConsole.Prompt(spells);
+        AnsiConsole.Clear();
+        var g = new Grid();
+        g.AddColumn(new GridColumn());
+        g.AddColumn(new GridColumn());
+        // TODO: Magical Damage Type
+        g.AddRow(new[] {new Markup($"[red]{option.Name}[/]"), new Markup("[blue]Magic[/]")});
+        g.AddRow(new[] {new Markup("Damage"), new Markup($"{option.Damage()}")});
+        g.AddRow(new[] {new Markup("Description"), new Markup($"[italic]{option.SpellDescription()}[/]")});
+        AnsiConsole.Write(g);
+        AnsiConsole.WriteLine();
+        AnsiConsole.MarkupLine("[gray][italic]Press any key to continue.[/][/]");
+        Console.ReadKey();
     }
 }

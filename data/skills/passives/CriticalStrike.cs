@@ -16,7 +16,7 @@ public class CriticalStrike : Passive {
     }
 
     public override void Action(Creature source, Creature target, DamageSet damage) {
-               double dmg = damage.GetElement(Element.Physical);
+        double dmg = damage.GetElement(Element.Physical);
         damage.SetElement(dmg*DamageFactor, Element.Physical);
     }
 }

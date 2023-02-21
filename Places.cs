@@ -24,11 +24,11 @@ public abstract class City : Place {
 
 public abstract class HuntingPlace : Place {
     public static int RequiredLevel;
-    public static List<Entities.Monster> NormalMonsters = new List<Entities.Monster>();
-    public static List<Entities.Monster> MediumMonsters = new List<Entities.Monster>();
+    public static List<Entities.Monster>? NormalMonsters;
+    public static List<Entities.Monster>? MediumMonsters;
     
-    public static List<Entities.Monster> HardMonsters = new List<Entities.Monster>();
-    public static List<Entities.Monster> Boss = new List<Entities.Monster>();
+    public static List<Entities.Monster>? HardMonsters;
+    public static List<Entities.Monster>? Boss;
 
     public HuntingPlace(string name, RPG.Game parent) : base(name, parent) {}
 

@@ -5,7 +5,7 @@ public class Dwarf : Monster {
         MaxHealth = 50;
         BaseDamage = 6;
         BaseDefense = 3;
-        Passives.Add(new Bash(10));
+        Passives.Add(new Bash(20));
         DropExp = 5;
         DropGold = new Tuple<int, int>(3, 6);
     }

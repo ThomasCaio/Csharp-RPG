@@ -27,7 +27,7 @@ public class FightView : View {
     public override void Render() {
         var player = Parent.Player;
         Log.ClearLog();
-        if (MonsterParty != null && player != null && PlayerParty != null)
+        if (MonsterParty != null && player != null && PlayerParty != null && FightPlace != null)
         {
             while (MonsterParty.Count > 0) {
                 Grid grid = new Grid();
@@ -36,7 +36,7 @@ public class FightView : View {
                 // DRAW TABLE
                 AnsiConsole.Clear();
 
-                Table Fight = new Table().Width(60).Title("Fight").HideHeaders();
+                Table Fight = new Table().Width(60).Title($"{FightPlace.Name} Fight").HideHeaders();
                 Fight.AddColumn("Creatures");
                 Fight.AddColumn("Health");
                 if (Fight.Columns.Count == 2) {
@@ -78,11 +78,13 @@ public class FightView : View {
                 Log.ClearEvents();
 
                 string option = Options(MonsterParty, PlayerParty);
-                if (option == "Inventory") {
+                if (option == "Inventory")
+                {
                     continue;
                 }
-                MonsterTurn(MonsterParty, PlayerParty);
                 EndTurn(MonsterParty, PlayerParty);
+                MonsterTurn(MonsterParty, PlayerParty);
+                if (option == "Stun") continue;
                 if (option == "Run") return;
                 Log.ClearLog();
             }
@@ -91,39 +93,53 @@ public class FightView : View {
 
     public string Options(Party MonsterParty, Party PlayerParty) {
         var player = PlayerParty[0];
-        string option = AnsiConsole.Prompt(
-            new SelectionPrompt<string>().AddChoices<string>(new[] {
-                "Attack!",
-                "Cast",
-                "Inventory",
-                "Run",
-                })
-        );
+        if (!player.Effects.Any(e => e.Name == "Stun"))
+        {            
+            string option = AnsiConsole.Prompt(
+                new SelectionPrompt<string>().AddChoices<string>(new[] {
+                    "Attack!",
+                    "Cast",
+                    "Inventory",
+                    "Run",
+                    })
+            );
 
-        if (option == "Attack!")
-        {
-            var target = SelectTarget(player, MonsterParty);
-            Combat.Attack(player, target);
-        }
-        else if (option == "Cast")
-        {
-            Spell spell = SelectSpell(player);
-            if (spell.Name == "Back")
-            {
-                Options(MonsterParty, PlayerParty);
-            }
-            else
+            if (option == "Attack!")
             {
                 var target = SelectTarget(player, MonsterParty);
-                Combat.Cast(player, target, spell);
+                Combat.Attack(player, target);
             }
-        }
-        else if (option == "Inventory")
-        {
-            var view = (InventoryView)Parent.GameViews["Inventory"];
-            view.Render();
-        }
+            else if (option == "Cast")
+            {
+                Spell spell = SelectSpell(player);
+                if (spell.Name == "Back")
+                {
+                    Options(MonsterParty, PlayerParty);
+                }
+                else
+                {
+                    var target = SelectTarget(player, MonsterParty);
+                    Combat.Cast(player, target, spell);
+                }
+            }
+            else if (option == "Inventory")
+            {
+                var view = (InventoryView)Parent.GameViews["Inventory"];
+                view.Render();
+            }
         return option;
+        }
+        AnsiConsole.WriteLine("You are stunned.");
+        AnsiConsole.WriteLine("");
+        AnsiConsole.MarkupLine("[gray][italic]Press any key to conitnue.[/][/]");
+        Console.ReadKey();
+        return "Stun";
+
+    }
+
+    public void PrintStun()
+    {
+
     }
 
     public void MonsterTurn(Party MonsterParty, Party PlayerParty) {

@@ -1,15 +1,20 @@
 using Places;
+using Entities;
 using Monsters.All;
 
 public class Forest : HuntingPlace {
     public Forest(RPG.Game parent) : base("Forest", parent) {
-        NormalMonsters.Add(new Rat());
+        NormalMonsters = new List<Monster> { new Rat() };
 
-        MediumMonsters.Add(new Spider());
-        MediumMonsters.Add(new Rat());
+        MediumMonsters = new List<Monster> {
+            new Spider(),
+            new Rat()
+        };
         
-        HardMonsters.Add(new Wolf());
-        HardMonsters.Add(new Troll());
-        HardMonsters.Add(new Elf());
+        HardMonsters = new List<Monster> {
+            new Wolf(),
+            new Troll(),
+            new Elf()
+        };
     }
 }

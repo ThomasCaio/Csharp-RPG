@@ -7,9 +7,11 @@ public class Firebolt : Spell {
         BaseDamage = 5;
     }
 
-    public override int CalculateDamage(Creature? source)
-    {
-        return (Source != null) ? (int)Math.Round(source!.MaxHealth * 0.1) + BaseDamage : BaseDamage;
+    public override int CalculateDamage(Creature? source) {
+        if (source == null) {
+            return BaseDamage;
+        }
+        return (int)Math.Round(source.MaxHealth * 0.1) + BaseDamage;
     }
 
     public override string SpellDescription() {

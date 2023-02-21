@@ -19,7 +19,7 @@ public class DamageOverTime : Spells.Effect {
         } else {
             DateTime now = DateTime.Now;
             Directory.CreateDirectory("./logs");
-            File.AppendAllText("./logs/dot.log", $"{now} Class(DamageOverTime).Logic\n spell:{Name} S:{Source!.Name} T:{Target!.Name}");
+            File.AppendAllText("./logs/dot.log", $"{now} Class(DamageOverTime).Logic spell:{Name} S:{Source?.Name} T:{Target?.Name}\n");
         }
     }
 

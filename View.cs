@@ -1,10 +1,8 @@
 namespace Views;
-using Spectre.Console;
-using RPG;
 
 public abstract class View {
-    public Game Parent;
-    public View(Game parent) {
+    public RPG.Game Parent;
+    public View(RPG.Game parent) {
         Parent = parent;
     }
 

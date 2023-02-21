@@ -69,7 +69,7 @@ public class FightView : View {
                 } else {grid.AddRow(Fight);}
                 
 
-                if (!player.IsAlive()) {
+                if (!player.IsAlive) {
                     Log.Table.AddRow("You lose!");
                     AnsiConsole.Write(grid);
                     System.Environment.Exit(1);
@@ -80,11 +80,10 @@ public class FightView : View {
                 string option = Options(MonsterParty, PlayerParty);
                 if (option == "Inventory") {
                     continue;
-                } else if (option == "Run") {
-                    return;
                 }
                 MonsterTurn(MonsterParty, PlayerParty);
                 EndTurn(MonsterParty, PlayerParty);
+                if (option == "Run") return;
                 Log.ClearLog();
             }
         }
@@ -123,11 +122,6 @@ public class FightView : View {
         {
             var view = (InventoryView)Parent.GameViews["Inventory"];
             view.Render();
-        }
-        else if (option == "Run")
-        {
-            MonsterTurn(MonsterParty, PlayerParty);
-            EndTurn(MonsterParty, PlayerParty);
         }
         return option;
     }
@@ -176,7 +170,7 @@ public class FightView : View {
             table.AddRow(text, chart);
         }
         else if (table.Columns.Count == 3) {
-            table.AddRow(text, chart, new Text(creature.EffectList()));
+            table.AddRow(text, chart, new Text(creature.EffectList));
         }
     }
 

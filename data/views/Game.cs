@@ -29,9 +29,15 @@ public class GameView : View {
             
             Log.LoadEvents();
             Log.ClearEvents();
+
+            if (!player.IsAlive) {
+                Log.Table.AddRow("You lose!");
+                AnsiConsole.Write(Log.Table);
+                System.Environment.Exit(1);
+            }
             AnsiConsole.Write(grid);
             Log.ClearLog();
-
+            
             var option = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                 .AddChoices("Hunt", "Character", "Inventory", "Shop", "Save and exit game"));
@@ -64,8 +70,14 @@ public class GameView : View {
         t.AddRow(new Text("Health"), new BarChart().WithMaxValue(character.MaxHealth).AddItem($"{character.Health}/{character.MaxHealth}", character.Health, Color.Red).HideValues());
         t.AddRow(new Text("Gold"), new Text($"{character.Gold}"));
         if (character.Effects.Count > 0) {
-            t.AddRow(new Text("Effects"), new Text($"{character.EffectList()}"));
+            t.AddRow(new Text("Effects"), new Text($"{character.EffectList}"));
         }
         return t;
+    }
+
+
+    public void DeadPlayer(Entities.Character player)
+    {
+
     }
 }

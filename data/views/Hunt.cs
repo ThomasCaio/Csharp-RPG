@@ -31,6 +31,17 @@ public class HuntingPlacesView : View {
         if (Parent.Places.Keys.Contains("Last Hunt")) {
             selection.AddChoice($"Last Hunt");
         }
+        foreach (var hunt in Parent.Places.Values)
+        {
+            if (player != null)
+            {
+                if (player.Scores.Values.Any(h => h > 100))
+                {
+                    selection.AddChoice($"{hunt.Name} (Boss)");
+                }
+
+            }
+        }
         foreach (string hunt in Parent.Places.Keys) {
             if (hunt == "Last Hunt") {
                 continue;
@@ -48,14 +59,24 @@ public class HuntingPlacesView : View {
 
     public void RenderPlace(HuntingPlace place) {
         var player = Parent.Player;
-        if (player != null) {
-            var view = (FightView)Parent.GameViews["Fight"];
+        if (player != null && Parent.GameViews["Fight"] is FightView view)
+        {
             int placeScore = player.Scores.GetValueOrDefault(place.Name, 0);
             view.Setup(new Entities.Party(player), place.NewParty(placeScore), place);
             view.Render();
-            if (!(Parent.Places.Keys.Contains("Last Hunt"))) {
-                Parent.Places.Add("Last Hunt", place);
-            } else {Parent.Places["Last Hunt"] = place;}
+            UpdateLastHunt(place);
+        }
+    }
+
+    public void UpdateLastHunt(HuntingPlace place)
+    {
+        if (!(Parent.Places.Keys.Contains("Last Hunt")))
+        {
+            Parent.Places.Add("Last Hunt", place);
+        }
+        else
+        {
+            Parent.Places["Last Hunt"] = place;
         }
     }
 }

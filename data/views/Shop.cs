@@ -2,21 +2,25 @@ namespace Views;
 using Items;
 using Spectre.Console;
 
-public class ShopView : View{
+public class ShopView : View {
 
     public GameLog Log;
 
     public ShopView(RPG.Game parent) : base(parent) {
+        Parent = parent;
         Log = new GameLog(parent);
     }
 
     public override void Render(){
         AnsiConsole.Clear();
         Log.Render();
+
+        // Simplify selection prompt creation by chaining methods
         var selection = new SelectionPrompt<string>()
-        .AddChoiceGroup("Equipments", new[] {"Helmets", "Armors", "Legs", "Boots"})
-        .AddChoiceGroup("Weapons", new[] {"Swords", "Axes", "Clubs", "Staffs"})
-        .AddChoices(new[] {"Shields", "Consumables", "Back"});
+            .Title("What would you like to buy?")
+            .PageSize(10)
+            .AddChoices(new[] {"Equipments", "Weapons", "Shields", "Consumables", "Back"});
+
         var option = AnsiConsole.Prompt(selection);
         if (option != "Back") {
             ShopItemType(option);
@@ -25,21 +29,19 @@ public class ShopView : View{
     }
 
     public void ShopItemType(string itemType) {
-        var itemList = Parent.itemFactory.Filter(itemType);
+        Enum.TryParse(itemType, out ItemTypes it);
+        var itemList = Parent.itemFactory.GetItems(it);
         AnsiConsole.Clear();
-        var selection = new SelectionPrompt<Item>();
-        selection.UseConverter(item => {
-            if (item.Price > 0)  {
-                return $"{item.Title}\t\t${item.Price}";
-            }
-            return item.Title;
-            });
-        foreach(Item i in itemList) {
-            selection.AddChoice(i);
-        }
-        selection.AddChoice(Item.BlankItem("Back"));
+
+        // Simplify selection prompt creation by chaining methods
+        var selection = new SelectionPrompt<Item>()
+            .Title($"Select a {itemType} to buy:")
+            .PageSize(10)
+            .UseConverter(item => $"{item.Name}\t${item.Price}")
+            .AddChoices(itemList);
+
         Item option = AnsiConsole.Prompt(selection);
-        if (option.Title != "Back") {
+        if (option != null) {
             Buy(option);
         }
     }
@@ -50,14 +52,15 @@ public class ShopView : View{
             if (player.Gold >= item.Price) {
                 player.Inventory.Add(item);
                 player.Gold -= item.Price;
+                Log.AddEvent($"You bought {item.Name} for ${item.Price}.");
             }
             else {
-                Log.AddEvent($"You have no gold. It costs ${item.Price}.");
+                Log.AddEvent($"You don't have enough gold to buy {item.Name}. It costs ${item.Price}.");
             }
         }
     }
 
     public void Sell(Item item) {
-
+        // TODO: Implement selling items
     }
 }

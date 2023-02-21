@@ -9,6 +9,7 @@ public class Forest : HuntingPlace {
         MediumMonsters.Add(new Rat());
         
         HardMonsters.Add(new Wolf());
-
+        HardMonsters.Add(new Troll());
+        HardMonsters.Add(new Elf());
     }
 }

@@ -62,9 +62,9 @@ public static class Combat {
         if (source.Type == CreatureType.Character) {
 
             Character s = (Character)source;
-            damage = new DamageSet(s.GetDamage());
+            damage = new DamageSet(s.Damage);
         } else {
-            damage = new DamageSet(source.GetDamage());
+            damage = new DamageSet(source.Damage);
             }
         int chance = RNG.Next(1, 100);
         if (chance < 75) {AttackSystem.Hit(source, target, damage, true);} 
@@ -80,7 +80,7 @@ public static class AttackSystem {
     public static void Hit(Creature source, Creature target, DamageSet damage, bool castPassives=false, bool showLog=true) {
         if (castPassives) {
             if (source.Passives.Count > 0) {
-                foreach (Passive p in source.OnHitPassives()) {
+                foreach (Passive p in source.OnHitPassives) {
                     if (p.Chance > Combat.RNG.Next(1, 100)) {
                         p.Cast(source, target, damage);
                         if (showLog) {

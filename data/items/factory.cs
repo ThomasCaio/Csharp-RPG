@@ -1,56 +1,52 @@
 namespace Items.Factory;
 using Items.All;
 
-public class ItemFactory {
-    public RPG.Game Parent;
-    public Dictionary<string, Dictionary<string, Item>>RegisteredItems = new Dictionary<string, Dictionary<string, Item>>();
-    public ItemFactory(RPG.Game parent) {
-        Parent = parent;
-        RegisteredItems["Swords"] = new Dictionary<string, Item>();
-        RegisteredItems["Axes"] = new Dictionary<string, Item>();
-        RegisteredItems["Clubs"] = new Dictionary<string, Item>();
-        RegisteredItems["Staffs"] = new Dictionary<string, Item>();
-        RegisteredItems["Helmets"] = new Dictionary<string, Item>();
-        RegisteredItems["Armors"] = new Dictionary<string, Item>();
-        RegisteredItems["Legs"] = new Dictionary<string, Item>();
-        RegisteredItems["Boots"] = new Dictionary<string, Item>();
-        RegisteredItems["Shields"] = new Dictionary<string, Item>();
-        RegisteredItems["Consumables"] = new Dictionary<string, Item>();
-        RegisteredItems["Others"] = new Dictionary<string, Item>();
+public class ItemFactory
+    {
+        private readonly Dictionary<ItemTypes, List<Item>> items = new Dictionary<ItemTypes, List<Item>>();
 
-        // Weapons
-
-            // Swords
-            RegisteredItems["Swords"]["Short Sword"] = new ShortSword();
-            RegisteredItems["Swords"]["Demon Sword"] = new DemonSword();
-
-        // Equipments
-
-            // Helmets
-            RegisteredItems["Helmets"]["Leather Helmet"] = new LeatherHelmet();
-    }
-
-    public bool Contains(string str) {
-        return RegisteredItems.Keys.Contains(str);
-    }
-
-    public void New(Entities.Inventory inventory, string str) {
-        foreach (Dictionary<string, Item> dict in RegisteredItems.Values) {
-            foreach(Item i in dict.Values){
-                if (i.Title == str) {
-                    inventory.Add(i.New());
-                }
-            }
+        public ItemFactory()
+        {
+            this.RegisterItems();
         }
-    }
 
-    public List<Item> Filter(string itemType) {
-        List<Item> list = new List<Item>();
-        if (RegisteredItems.Keys.Contains(itemType)) {
-            foreach (Item i in RegisteredItems[itemType].Values) {
-                list.Add(i);
-            }
+        public IEnumerable<Item> GetItems(ItemTypes itemType)
+        {
+            return this.items[itemType];
         }
-        return list;
-    }
+
+        public Item CreateItem(string itemName)
+        {
+            var item = this.items.Values.SelectMany(x => x)
+                                         .FirstOrDefault(x => x.Name == itemName);
+            if (item == null)
+            {
+                throw new ArgumentException($"Item {itemName} not found");
+            }
+
+            return item.Clone();
+        }
+
+        private void RegisterItems()
+        {
+            this.RegisterItem(new ShortSword());
+            this.RegisterItem(new DemonSword());
+
+            this.RegisterItem(new LeatherHelmet());
+        }
+
+        private void RegisterItem(Wearable item)
+        {
+            this.AddItem(item.ItemType, item);
+        }
+
+        private void AddItem(ItemTypes type, Item item)
+        {
+            if (!this.items.ContainsKey(type))
+            {
+                this.items[type] = new List<Item>();
+            }
+
+            this.items[type].Add(item);
+        }
 }

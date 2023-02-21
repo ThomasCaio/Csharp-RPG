@@ -42,7 +42,7 @@ public class CharacterView : View {
         AnsiConsole.Clear();
         var player = Parent.Player;
         if (player != null) {
-            var options = new SelectionPrompt<Items.Item>().UseConverter(item => item.Title).Title("Equipped Items");
+            var options = new SelectionPrompt<Items.Item>().UseConverter(item => item.Name).Title("Equipped Items");
 
             foreach (Items.Item? item in player.Body.Values) {
                 if (item != null) {

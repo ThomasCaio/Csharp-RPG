@@ -18,14 +18,14 @@ public class InventoryView : View {
             foreach (Items.ItemSlot slot in player.Body.Keys) {
                 var item = player.Body[slot];
                 if (item != null) {
-                    table.AddRow(new Text(Item.SlotName(item.Slot)), new Text(item.Title));
+                    table.AddRow(new Text(item.Slot.ToString()), new Text(item.Name));
                 }
             }
             if (table.Rows.Count > 0) {
                 AnsiConsole.Write(table);
             }
 
-            var options = new SelectionPrompt<Items.Item>().UseConverter(item => item.Title).Title("Inventory");
+            var options = new SelectionPrompt<Items.Item>().UseConverter(item => item.Name).Title("Inventory");
 
             foreach (Items.Item item in player.Inventory.Items) {
                 options.AddChoice(item);
@@ -46,13 +46,13 @@ public class InventoryView : View {
         if (player != null) {
             AnsiConsole.Clear();
             var prompt = new SelectionPrompt<string>();
-            if (item.Type == ItemType.Wearable && !(player.Body.Values.Contains(item))) {
+            if (item.ObjectType == ObjectTypes.Wearable && !(player.Body.Values.Contains(item))) {
                 prompt.AddChoice("Equip");
             }
             else if (player.Body.Values.Contains(item)) {
                 prompt.AddChoice("Unequip");
             }
-            else if (item.Type == ItemType.Usable) {
+            else if (item.ObjectType == ObjectTypes.Usable) {
                 prompt.AddChoice("Use");
             }
             prompt.AddChoice("Look");
@@ -76,7 +76,7 @@ public class InventoryView : View {
     public void ItemDetails(Item item) {
         AnsiConsole.Clear();
         Table table = new Table();
-        table.AddColumns("Attribute", "Value").HideHeaders().Title($"Looking {item.Title}");
+        table.AddColumns("Attribute", "Value").HideHeaders().Title($"Looking {item.Name}");
         var dict = item.Look();
         foreach (string attr in dict.Keys) {
             table.AddRow(attr, dict[attr]);

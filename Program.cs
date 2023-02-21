@@ -93,11 +93,9 @@ public class Game {
 
         // Register Hunting Areas
         Places["Forest"] = new Forest(this);
-        Places["Forest"] = new Forest(this);
-        Places["Forest"] = new Forest(this);
 
         // Item Manager
-        itemFactory = new ItemFactory(this);
+        itemFactory = new ItemFactory();
     }
 
     public void PlayerSetUp(Action<Character> func) {

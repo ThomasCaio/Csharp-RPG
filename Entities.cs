@@ -10,78 +10,48 @@ public enum CreatureType {
     Monster
 }
 
-public abstract class Creature{
-    public string Name;
-    public CreatureType Type;
-    private double maxhealth = 100;
+public abstract class Creature {
+    private double maxHealth = 100;
     private double health = 100;
-    public double Health {get {
-        return this.health;
-    } set {
-        if (value < 0){
-            health = value;
-        }else {health = value;}
-        }}
+
+    public string Name { get; set; }
+    public CreatureType Type { get; set; }
+    public double BaseDamage { get; set; } = 1;
+    public double BaseDefense { get; set; } = 0;
+    public List<Passive> Passives { get; } = new List<Passive>();
+    public List<Effect> Effects { get; } = new List<Effect>();
+
+    public double Health {
+        get { return health; }
+        set { health = Math.Max(0, Math.Min(value, maxHealth)); }
+    }
 
     public double MaxHealth {
-        get {
-            return this.maxhealth;
-        }
+        get { return maxHealth; }
         set {
-            if (value < health) {
-                health = value;
-            }
-            this.maxhealth = value;
+            maxHealth = value;
+            health = Math.Min(health, maxHealth);
         }
     }
 
-    public double BaseDamage = 1;
-    public double BaseDefense = 0;
+    public virtual double Damage { get { return BaseDamage + DamageModifier; } }
+    public virtual double DamageModifier { get { return 0; } }
 
-    public List<Passive> Passives = new List<Passive>();
-    public List<Effect> Effects = new List<Effect>();
+    public virtual double Defense { get { return BaseDefense + DefenseModifier; } }
+    public virtual double DefenseModifier { get { return 0; } }
+
+    public List<Passive> OnHitPassives { get { return Passives.Where(p => p.Type == PassiveType.OnHit).ToList(); } }
+
+    public string EffectList {
+        get { return Effects.Count == 0 ? "" : string.Join(", ", Effects); }
+    }
 
     public Creature(string name, CreatureType type) {
         Name = name;
         Type = type;
     }
-
-    public virtual double DamageCalc() {return 0;}
-
-    public virtual double DefenseCalc() {return 0;}
-
-    public double GetDamage() {
-        return BaseDamage + DamageCalc();
-    }
-
-    public double GetDefense() {
-        return BaseDefense + DefenseCalc();
-    }
-    public List<Passive> OnHitPassives() {
-        List<Passive> list = new List<Passive>();
-        foreach (Passive p in Passives) {
-            if (p.Type == PassiveType.OnHit) {
-                list.Add(p);
-            }
-        }
-        return list;
-    }
-
-    public string EffectList() {
-        if (Effects.Count == 0) {
-            return "";
-        }
-        if (Effects.Count == 1) {
-            return Effects[0].ToString();
-        }
-        string list = "";
-        foreach (int i in Range(0, Effects.Count)) {
-            Effect effect = Effects[i];
-            list += $"{effect.ToString()}, ";
-        }
-        return list;
-    }
 }
+
 
 public class Inventory {
     public List<Item> Items = new List<Item>();
@@ -96,7 +66,7 @@ public class Inventory {
     }
     public void Remove(Item item) {
         if (!Items.Contains(item)) {
-            RPG.Game.Log.Add($"Your inventory don't contains {item.Title}.");
+            RPG.Game.Log.Add($"Your inventory don't contains {item.Name}.");
             return;
         }
         Items.Remove(item);
@@ -126,17 +96,20 @@ public class Character : Creature
         }}
     public int Level = 1;
     public int Gold = 0;
-    public Dictionary<ItemSlot, Item?> Body = new Dictionary<ItemSlot, Item?>();
+    public Dictionary<ItemSlot, Item?> Body = new Dictionary<ItemSlot, Item?>
+    {
+        [ItemSlot.Head] = null,
+        [ItemSlot.Chest] = null,
+        [ItemSlot.Legs] = null,
+        [ItemSlot.Boots] = null,
+        [ItemSlot.MainHand] = null,
+        [ItemSlot.OffHand] = null,
+    };
     public Inventory Inventory = new Inventory();
 
     public Dictionary<string, int> Scores = new Dictionary<string, int>();
     public Character(string name) : base(name, CreatureType.Character) {
-        Body[ItemSlot.Head] = null;
-        Body[ItemSlot.Chest] = null;
-        Body[ItemSlot.Legs] = null;
-        Body[ItemSlot.Boots] = null;
-        Body[ItemSlot.MainHand] = null;
-        Body[ItemSlot.OffHand] = null;
+        
     }
 
     public void LevelUP() {
@@ -145,13 +118,17 @@ public class Character : Creature
         Health += 5;
     }
 
-    public override double DamageCalc() {
-        Item? item = Body.GetValueOrDefault(ItemSlot.MainHand, null);
-        if (item != null) {
-            Weapon weapon = (Weapon)item;
-            return weapon.BaseDamage;
+    public override double DamageModifier
+    { 
+        get
+        {
+            if (Body[ItemSlot.MainHand] is Weapon weapon)
+            {
+                return weapon.BaseDamage;
+            }
+            return 0;
         }
-        return 0;
+        
     }
 
     public void Equip(Item item) {
@@ -159,7 +136,7 @@ public class Character : Creature
         if (equipped == null) {
             Body[item.Slot] = item;
             Inventory.Remove(item);
-            Game.Log.Add($"{item.Title} equipped.");
+            Game.Log.Add($"{item.Name} equipped.");
         }
         else {
             Unequip(equipped);
@@ -172,18 +149,13 @@ public class Character : Creature
         if (equipped != null) {
             Body[item.Slot] = null;
             Inventory.Add(item);
-            Game.Log.Add($"{item.Title} unequipped.");
+            Game.Log.Add($"{item.Name} unequipped.");
             return;
         }
         RPG.Game.Log.Add("You have no item on this slot.");
     }
 
-    public bool IsAlive() {
-        if (Health > 0) {
-            return true;
-        }
-        return false;
-    }
+    public bool IsAlive => Health > 0;
 }
 
 public class Monster : Creature {

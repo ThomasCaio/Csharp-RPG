@@ -34,15 +34,15 @@ public abstract class HuntingPlace : Place {
 
     public Party NewParty(int score) {
         var pt = new Party();
-        int quantity = 1;
+        int pt_size = 1;
         if (score > 100) {
-            quantity = RPG.Game.RNG.Next(2, 5);
+            pt_size = RPG.Game.RNG.Next(2, 5);
         }
         else if (score > 25) {
-            quantity = RPG.Game.RNG.Next(1, 3);
+            pt_size = RPG.Game.RNG.Next(1, 3);
         }
 
-        foreach (int i in Range(0, quantity)) {
+        foreach (int i in Range(0, pt_size)) {
             NewMonster(score, pt);
         }
 
@@ -52,7 +52,12 @@ public abstract class HuntingPlace : Place {
     public void NewMonster(int score, Party party) {
         Monster? monster;
         if (score > 100) {
-            monster = MonsterFactory.New(HardMonsters[RPG.Game.RNG.Next(HardMonsters.Count)].Name);
+            var rng = RPG.Game.RNG.Next(HardMonsters.Count);
+            monster = MonsterFactory.New(HardMonsters[rng].Name);
+            foreach(var m in HardMonsters)
+            {
+                File.AppendAllText("./tests/monsters.test", $"{m.Name} {rng} {HardMonsters[rng]}\n");
+            }
         }
         else if (score > 25) {
             monster = MonsterFactory.New(MediumMonsters[RPG.Game.RNG.Next(MediumMonsters.Count)].Name);

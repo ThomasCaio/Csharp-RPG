@@ -42,9 +42,10 @@ public class Debug
     {
         game.Player!.Inventory.Add(new DemonSword());
         game.Player!.Equip(game.Player.Inventory.Get(0));
-        game.Player!.Experience += 50000000;
+        game.Player!.Experience += 10000;
         game.Player!.Scores.Add("Forest", 150);
-        game.Player!.Gold = 10;
+        game.Player!.Scores.Add("Cavern", 150);
+        game.Player!.Gold = 10000;
         game.Player!.Spellbook.Add(new Firebolt());
     }
 }
@@ -93,6 +94,7 @@ public class Game {
 
         // Register Hunting Areas
         Places["Forest"] = new Forest(this);
+        Places["Carvern"] = new Cavern(this);
 
         // Item Manager
         itemFactory = new ItemFactory();

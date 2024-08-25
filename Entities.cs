@@ -180,6 +180,6 @@ public class Monster : Creature {
 public class Party : List<Creature> {
     public Party() {}
     public Party(Creature creature) {
-        this.Add(creature);
+        Add(creature);
     }
 }

@@ -89,13 +89,13 @@
 
     public class Weapon : Wearable
     {
-        public double BaseDamage { get; set; }
+        public double Damage { get; set; }
         private readonly List<Spells.Passive> _passiveSpells = new List<Spells.Passive>();
 
         public Weapon(string title, ItemTypes itemType) : base(title, itemType, ItemSlot.MainHand)
         {
             ItemTypes ItemType = itemType;
-            BaseDamage = 0;
+            Damage = 0;
         }
 
         public void AddPassiveSpell(Spells.Passive passiveSpell)
@@ -108,7 +108,7 @@
             var dict = new Dictionary<string, string>
             {
                 { "Title", Name },
-                { "Damage", $"{BaseDamage}" }
+                { "Damage", $"{Damage}" }
             };
             foreach (var p in _passiveSpells)
             {

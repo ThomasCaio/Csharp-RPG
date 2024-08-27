@@ -1,6 +1,7 @@
 namespace Views;
 using Spectre.Console;
 using Places;
+using Logging;
 
 public class HuntingPlacesView : View {
 
@@ -8,42 +9,60 @@ public class HuntingPlacesView : View {
     public override void Render() {
         AnsiConsole.Clear();
         var player = Parent.Player;
-        if (player != null) {
-            if (player.Scores.Keys.Count() > 0 ) {
-                var table = new Table();
-                table.AddColumn("Hunt");
-                table.AddColumn("Score");
-                table.AddColumn("Tier");
+        if (player != null)
+        {
+            var table = new Table()
+                    .AddColumn("Hunt")
+                    .AddColumn("Score")
+                    .AddColumn("Tier");
+
                 table.Columns[0].Width(15);
-                foreach (string key in player.Scores.Keys) {
-                    int score = player.Scores[key];
-                    string tier = (score > 100) ? "[yellow]★★★[/]" : (score > 25) ? "[lightgoldenrod1]★★[/] " : "[khaki1]★[/]  ";
-                    int inttier = (score > 100) ? 3 : (score > 25) ? 2 : 1;
-                    Color barcolor = (score > 100) ? Color.Yellow : (score > 25) ? Color.LightGoldenrod1 : Color.Khaki1;
-                    var chart = new BarChart().HideValues().WithMaxValue(100).Width(40).AddItem($"{score}/100", score, barcolor);
-                    table.AddRow(new Markup($"{tier.Trim()} {key}"), new Text($"{player.Scores[key]}"), chart);
+
+                foreach (var (key, score) in player.Scores)
+                {
+                    string tier = score switch
+                    {
+                        > 100 => "[yellow]★★★[/]",
+                        > 25 => "[lightgoldenrod1]★★[/]",
+                        _ => "[khaki1]★[/]",
+                    };
+
+                    Color barColor = score switch
+                    {
+                        > 100 => Color.Yellow,
+                        > 25 => Color.LightGoldenrod1,
+                        _ => Color.Khaki1,
+                    };
+
+                    var chart = new BarChart()
+                        .HideValues()
+                        .WithMaxValue(100)
+                        .Width(40)
+                        .AddItem($"{score}/100", score, barColor);
+
+                    table.AddRow(new Markup($"{tier.Trim()} {key}"), new Text($"{score}"), chart);
                 }
-                AnsiConsole.Write(table);
-            }
+            AnsiConsole.Write(table);
         }
+
         var selection = new SelectionPrompt<string>();
         selection.Title("Select a hunting place:");
         if (Parent.Places.Keys.Contains("Last Hunt")) {
-            selection.AddChoice($"Last Hunt");
+            selection.AddChoice($"Last Hunt ({Parent.Places["Last Hunt"].Name})");
         }
-        foreach (var hunt in Parent.Places.Values)
-        {
-            if (player != null)
-            {
-                if (player.Scores.Values.Any(h => h > 100))
-                {
-                    selection.AddChoice($"{hunt.Name} (Boss)");
-                }
+        // foreach (var hunt in Parent.Places.Values)
+        // {
+        //     if (player != null)
+        //     {
+        //         if (player.Scores.Values.Any(h => h > 100))
+        //         {
+        //             selection.AddChoice($"{hunt.Name} (Boss)");
+        //         }
 
-            }
-        }
+        //     }
+        // }
         foreach (string hunt in Parent.Places.Keys) {
-            if (hunt == "Last Hunt") {
+            if (hunt.Contains("Last Hunt")) {
                 continue;
             }
             selection.AddChoice(hunt);
@@ -52,6 +71,11 @@ public class HuntingPlacesView : View {
         string option = AnsiConsole.Prompt(selection);
         if (option == "Back") {
             return;
+        }
+        global::Logging.Debug.Write($"Hunt option: {option}");
+        if (option.Contains("Last Hunt"))
+        {
+            option = "Last Hunt";
         }
         HuntingPlace place = (HuntingPlace)Parent.Places[option];
         RenderPlace(place);
@@ -62,6 +86,7 @@ public class HuntingPlacesView : View {
         if (player != null && Parent.GameViews["Fight"] is FightView view)
         {
             int placeScore = player.Scores.GetValueOrDefault(place.Name, 0);
+            global::Logging.Debug.Write($"Place: {place}");
             view.Setup(new Entities.Party(player), place.NewParty(placeScore), place);
             view.Render();
             UpdateLastHunt(place);

@@ -14,7 +14,8 @@ public class Cavern : HuntingPlace {
         };
 
         HardMonsters = new List<Monster> {
-            new Dwarf()
+            new Dwarf(),
+            new DwarfSoldier(),
         };
     }
 }

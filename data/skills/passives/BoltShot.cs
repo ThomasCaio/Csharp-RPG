@@ -4,7 +4,7 @@ using CombatModule;
 
 public class BoltShot : Passive {
     public double DamageFactor;
-    public BoltShot(int chance=30, int baseDamage=8) : base("Bolt Shot", PassiveType.OnHit) {
+    public BoltShot(int chance=30, int baseDamage=10) : base("Bolt Shot", PassiveType.OnHit) {
         Chance = chance;
         BaseDamage = baseDamage;
         
@@ -12,7 +12,7 @@ public class BoltShot : Passive {
 
     public override string SpellDescription()
     {
-        return $"You have a chance to shot a bolt dealing {DamageFactor*100}% damage on hit enemies.";
+        return $"You have a chance to shot a bolt dealing {BaseDamage} damage on enemy.";
     }
 
     public override void Action(Creature source, Creature target, DamageSet damage) {

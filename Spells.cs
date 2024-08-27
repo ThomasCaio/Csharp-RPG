@@ -17,6 +17,7 @@ public abstract class Spell {
     }
 
     public void Cast(Creature source, Creature target, DamageSet damage) {
+        Source=source;
         PreAction(source, target, damage);
         Action(source, target, damage);
         PostAction(source, target, damage);

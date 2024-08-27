@@ -5,6 +5,7 @@ using Items.Factory;
 using Views;
 using Places;
 using FileModule;
+using Logging;
 
 
 class Program {
@@ -35,6 +36,8 @@ public class Debug
     public static void Run() {
         Game g = new Game(TestSetup);
         g.Debug = true;
+        string now = DateTime.Now.ToString("---- (dd-MM-yyyy HH:mm:ss) ----" + Environment.NewLine);
+        Logging.Debug.Write($"{now}");
         g.Run();
     }
 
@@ -42,7 +45,7 @@ public class Debug
     {
         game.Player!.Inventory.Add(new DemonSword());
         game.Player!.Equip(game.Player.Inventory.Get(0));
-        game.Player!.Experience += 10000;
+        game.Player!.Experience += 100000;
         game.Player!.Scores.Add("Forest", 150);
         game.Player!.Scores.Add("Cavern", 150);
         game.Player!.Gold = 10000;
@@ -95,16 +98,12 @@ public class Game {
         // Register Hunting Areas
         Places["Forest"] = new Forest(this);
         Places["Carvern"] = new Cavern(this);
+        Places["Carvern2"] = new Cavern2(this);
 
         // Item Manager
         itemFactory = new ItemFactory();
     }
 
-    public void PlayerSetUp(Action<Character> func) {
-        if (Player != null){
-            func(Player);
-        }
-    }
     public void Run() {
         GameViews["Menu"].Render();
 

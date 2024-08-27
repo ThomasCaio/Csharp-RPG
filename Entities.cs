@@ -4,6 +4,8 @@ using CombatModule;
 using Spells;
 using static System.Linq.Enumerable;
 using RPG;
+using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 public enum CreatureType {
     Character,
@@ -21,11 +23,14 @@ public abstract class Creature {
     public List<Passive> Passives { get; } = new List<Passive>();
     public List<Effect> Effects { get; } = new List<Effect>();
 
+    [JsonProperty(Order = 1)]
     public double Health {
         get { return health; }
-        set { health = Math.Max(0, Math.Min(value, maxHealth)); }
+        // set { health = Math.Max(0, Math.Min(value, maxHealth)); } // Jeito correto, porém da bug pela ordem do deserialize que carrega primeiro o max health.
+        set { health = Math.Max(0, value); }
     }
 
+    [JsonProperty(Order = -1)]
     public double MaxHealth {
         get { return maxHealth; }
         set {
@@ -34,11 +39,13 @@ public abstract class Creature {
         }
     }
 
-    public virtual double Damage { get { return BaseDamage + DamageModifier; } }
-    public virtual double DamageModifier { get { return 0; } }
+    public bool IsAlive => Health > 0;
 
-    public virtual double Defense { get { return BaseDefense + DefenseModifier; } }
-    public virtual double DefenseModifier { get { return 0; } }
+    public virtual double Damage { get { return BaseDamage * DamageModifier; } }
+    public virtual double DamageModifier { get { return 1; } }
+
+    public virtual double Defense { get { return BaseDefense * DefenseModifier; } }
+    public virtual double DefenseModifier { get { return 1; } }
 
     public List<Passive> OnHitPassives { get { return Passives.Where(p => p.Type == PassiveType.OnHit).ToList(); } }
 
@@ -118,17 +125,22 @@ public class Character : Creature
         Health += 5;
     }
 
-    public override double DamageModifier
-    { 
+    public override double Damage
+    {
         get
         {
-            if (Body[ItemSlot.MainHand] is Weapon weapon)
-            {
-                return weapon.BaseDamage;
-            }
-            return 0;
+            double damage = Body.Values.OfType<Weapon>().Sum(weapon => weapon.Damage);
+            return (BaseDamage + damage) * DamageModifier;
         }
-        
+    }
+
+    public override double Defense
+    {
+        get
+        {
+            double itemDefense = Body.Values.OfType<Equipment>().Sum(armor => armor.Defense);
+            return (BaseDefense + itemDefense) * DefenseModifier;
+        }
     }
 
     public void Equip(Item item) {
@@ -154,8 +166,6 @@ public class Character : Creature
         }
         RPG.Game.Log.Add("You have no item on this slot.");
     }
-
-    public bool IsAlive => Health > 0;
 }
 
 public class Monster : Creature {
@@ -173,7 +183,9 @@ public class Monster : Creature {
     }
 
     public virtual void StartTurn(Creature target) {
+        if (this.IsAlive) {
         Combat.Attack(this, target);
+        }
     }
 }
 

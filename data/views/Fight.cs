@@ -127,18 +127,14 @@ public class FightView : View {
                 var view = (InventoryView)Parent.GameViews["Inventory"];
                 view.Render();
             }
-        return option;
+            return option;
         }
         AnsiConsole.WriteLine("You are stunned.");
         AnsiConsole.WriteLine("");
         AnsiConsole.MarkupLine("[gray][italic]Press any key to conitnue.[/][/]");
         Console.ReadKey();
+        Log.ClearLog();
         return "Stun";
-
-    }
-
-    public void PrintStun()
-    {
 
     }
 

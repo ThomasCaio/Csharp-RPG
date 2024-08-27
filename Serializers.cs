@@ -1,5 +1,3 @@
-// TODO: Player Serializer to network and save/load.
-
 namespace FileModule;
 using Entities;
 using Newtonsoft.Json;
@@ -14,7 +12,7 @@ public static class Serializers
 
     public static Character DeCharacter(string text)
     {
-        Character c = JsonConvert.DeserializeObject<Character>(text, new JsonSerializerSettings{ TypeNameHandling = TypeNameHandling.Auto });
-        return c;
+        var c = JsonConvert.DeserializeObject<Character>(text, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+        return c!;
     }
 }

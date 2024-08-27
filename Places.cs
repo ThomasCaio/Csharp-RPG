@@ -23,12 +23,12 @@ public abstract class City : Place {
 }
 
 public abstract class HuntingPlace : Place {
-    public static int RequiredLevel;
-    public static List<Entities.Monster>? NormalMonsters;
-    public static List<Entities.Monster>? MediumMonsters;
+    public int RequiredLevel;
+    public List<Entities.Monster>? NormalMonsters;
+    public List<Entities.Monster>? MediumMonsters;
     
-    public static List<Entities.Monster>? HardMonsters;
-    public static List<Entities.Monster>? Boss;
+    public List<Entities.Monster>? HardMonsters;
+    public List<Entities.Monster>? Boss;
 
     public HuntingPlace(string name, RPG.Game parent) : base(name, parent) {}
 
@@ -49,23 +49,21 @@ public abstract class HuntingPlace : Place {
         return pt;
     }
 
+    private List<Monster>? GetMonstersForScore(int score)
+    {
+        return score switch
+        {
+            > 100 => HardMonsters,
+            > 25 => MediumMonsters,
+            _ => NormalMonsters
+        };
+    }
+
     public void NewMonster(int score, Party party) {
-        Monster? monster;
-        if (score > 100) {
-            var rng = RPG.Game.RNG.Next(HardMonsters!.Count);
-            monster = MonsterFactory.New(HardMonsters[rng].Name);
-            foreach(var m in HardMonsters)
-            {
-                File.AppendAllText("./tests/monsters.test", $"{m.Name} {rng} {HardMonsters[rng]}\n");
-            }
-        }
-        else if (score > 25) {
-            monster = MonsterFactory.New(MediumMonsters![RPG.Game.RNG.Next(MediumMonsters.Count)].Name);
-        }
-        else {
-            monster = MonsterFactory.New(NormalMonsters![RPG.Game.RNG.Next(NormalMonsters.Count)].Name);
-        }
-        if (monster != null) {
+        var monsters = GetMonstersForScore(score);
+        var monster = MonsterFactory.New(monsters![RPG.Game.RNG.Next(monsters.Count)].Name);
+        if (monster != null)
+        {
             party.Add(monster);
         }
     }

@@ -4,6 +4,7 @@ using System.IO;
 
 public static class FileHandler
 {
+
     public static List<string> ListCharacters()
     {
         string path = "./saves";
@@ -23,20 +24,50 @@ public static class FileHandler
 
     public static void LoadCharacter(RPG.Game game, string name)
     {
-        string path = "./saves";
-        var text = File.ReadAllText($"{path}/{name}.data");
-        Character character = Serializers.DeCharacter(text);
-        game.Player = character;
+        string path = $"./saves/{name}.data";
+        if (File.Exists(path))
+        {
+            var text = File.ReadAllText(path);
+            Character character = Serializers.DeCharacter(text);
+            game.Player = character;
+        }
+        else
+        {
+            throw new FileNotFoundException($"Character save file '{name}.data' not found.");
+        }
     }
 }
 
 public class Test{
-    public static void Run(){
-        Character c = new Character("Demnok");
+    public static void Run()
+    {
+        Character c = new Character("Demnok")
+        {
+            MaxHealth = 220,
+            Health = 150
+        };
+
+        // Verifique os valores antes da serialização
+        Console.WriteLine($"Before Serialization - Name: {c.Name}, Health: {c.Health}, MaxHealth: {c.MaxHealth}");
+
         var serial = Serializers.Character(c);
-        var player = Serializers.DeCharacter(serial);
-        FileModule.FileHandler.ListCharacters();
         File.WriteAllText("./tests/serial.test", serial);
-        System.Console.WriteLine(player.Name);
+
+        var player = Serializers.DeCharacter(serial);
+
+        // Verifique os valores após a desserialização
+        Console.WriteLine($"After Deserialization - Name: {player.Name}, Health: {player.Health}, MaxHealth: {player.MaxHealth}");
+
+        // Compara os valores
+        if (player.Health == c.Health && player.MaxHealth == c.MaxHealth)
+        {
+            Console.WriteLine("Deserialization test passed!");
+        }
+        else
+        {
+            Console.WriteLine("Deserialization test failed!");
+            Console.WriteLine($"Expected Health: {c.Health}, Got: {player.Health}");
+            Console.WriteLine($"Expected MaxHealth: {c.MaxHealth}, Got: {player.MaxHealth}");
+        }
     }
 }

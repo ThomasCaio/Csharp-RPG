@@ -82,16 +82,17 @@ public static class AttackSystem {
             if (source.Passives.Count > 0) {
                 foreach (Passive p in source.OnHitPassives) {
                     if (p.Chance > Combat.RNG.Next(1, 100)) {
-                        p.Cast(source, target, damage);
                         if (showLog) {
                             RPG.Game.Log.Add($"{source.Name} casts {p.Name}!");
                         }
+                        p.Cast(source, target, damage);
                     }
-                }    
+                }
             }
         }
         Resistance(source, target, damage, showLog);
     }
+
     public static void Miss(Creature source, Creature target, DamageSet damage) {
         RPG.Game.Log.Add($"{source.Name} missed!");
     }
@@ -133,4 +134,5 @@ public static class AttackSystem {
         }
         
     }
+
 }

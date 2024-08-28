@@ -1,8 +1,8 @@
-using Entities;
+using EntityModule;
 using CombatModule;
-namespace Spells.Effects.DoT;
+namespace SpellModule.Effects.DoT;
 
-public class DamageOverTime : Spells.Effect {
+public class DamageOverTime : SpellModule.Effect {
     public double Damage;
 
     public DamageOverTime(string name, double damage, int turns) : base(name) {

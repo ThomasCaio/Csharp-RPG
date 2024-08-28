@@ -88,7 +88,7 @@ public class MenuView : View {
                 }
             }
         }
-        Parent.Player = new Entities.Character(CharacterName);
+        Parent.Player = new EntityModule.Character(CharacterName);
         if (Parent.gSetup != null) {
             Parent.gSetup(Parent);
         }

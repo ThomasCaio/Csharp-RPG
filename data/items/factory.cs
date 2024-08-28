@@ -1,5 +1,5 @@
-namespace Items.Factory;
-using Items.All;
+namespace ItemModule.Factory;
+using ItemModule.All;
 
 public class ItemFactory
     {
@@ -30,7 +30,7 @@ public class ItemFactory
         private void RegisterItems()
         {
             this.RegisterItem(new ShortSword());
-            this.RegisterItem(new DemonSword());
+            this.RegisterItem(new TestSword());
 
             this.RegisterItem(new LeatherHelmet());
         }

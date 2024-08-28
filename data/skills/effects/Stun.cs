@@ -1,8 +1,8 @@
-using Entities;
+using EntityModule;
 using CombatModule;
-namespace Spells.Effects.DoT;
+namespace SpellModule.Effects.DoT;
 
-public class Stun : Spells.Effect {
+public class Stun : SpellModule.Effect {
     public Stun(string name, int turns) : base(name)
     {
         Turns = turns;

@@ -1,6 +1,6 @@
 ﻿namespace CombatModule;
-using Entities;
-using Spells;
+using EntityModule;
+using SpellModule;
 
 public class DamageSet {
     public Dictionary<Element, double> _damages = new Dictionary<Element, double>();
@@ -62,9 +62,9 @@ public static class Combat {
         if (source.Type == CreatureType.Character) {
 
             Character s = (Character)source;
-            damage = new DamageSet(s.Damage);
+            damage = new DamageSet(s.TotalDamage);
         } else {
-            damage = new DamageSet(source.Damage);
+            damage = new DamageSet(source.TotalDamage);
             }
         int chance = RNG.Next(1, 100);
         if (chance < 75) {AttackSystem.Hit(source, target, damage, true);} 

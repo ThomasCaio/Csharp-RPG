@@ -1,5 +1,5 @@
 namespace FileModule;
-using Entities;
+using EntityModule;
 using System.IO;
 
 public static class FileHandler

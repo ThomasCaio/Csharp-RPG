@@ -1,5 +1,48 @@
-﻿namespace Items
+﻿using EntityModule;
+
+namespace ItemModule
 {
+
+    public interface IItemAttribute
+    {
+        string Name { get; set;}
+        int Value { get; set; }
+
+        void AddTo(Character character);
+        void RemoveTo(Character character);
+    }
+
+    public class ItemAttribute : IItemAttribute
+    {
+        public string Name { get; set; }
+        public int Value { get; set; }
+
+        public ItemAttribute(string name, int value)
+        {
+            Name = name;
+            Value = value;
+        }
+
+        public void AddTo(Character character)
+        {
+            var property = character.GetType().GetProperty(Name.Replace(" ", ""));
+            if (property != null)
+            {
+                double currentValue = (double)property.GetValue(character)!;
+                property.SetValue(character, currentValue + Value);
+            }
+        }
+
+        public void RemoveTo(Character character)
+        {
+            var property = character.GetType().GetProperty(Name.Replace(" ", ""));
+            if (property != null)
+            {
+                double currentValue = (double)property.GetValue(character)!;
+                property.SetValue(character, currentValue - Value);
+            }
+        }
+    }
 
     public enum ItemTypes
     {
@@ -65,7 +108,7 @@
             return (Item)this.MemberwiseClone();
         }
 
-        public virtual void Use(Entities.Creature creature) { }
+        public virtual void Use(EntityModule.Creature creature) { }
 
         public static Item BlankItem(string title)
         {
@@ -81,16 +124,35 @@
     public class Wearable : Item
     {
         public ItemTypes ItemType;
+        public List<IItemAttribute> Attributes { get; } = new List<IItemAttribute>();
+
         public Wearable(string title, ItemTypes itemType, ItemSlot itemSlot) : base(title, ObjectTypes.Wearable, itemSlot)
         {
             ItemTypes ItemType = itemType;
+        }
+
+        public void AddAttributes(Character character)
+        {
+            foreach (var attribute in Attributes)
+            {
+                Logging.Debug.Write($"Adding {attribute.Name}:{attribute.Value}", "items");
+                attribute.AddTo(character);
+            }
+        }
+
+        public void RemoveAttributes(Character character)
+        {
+            foreach (var attribute in Attributes)
+            {
+                attribute.RemoveTo(character);
+            }
         }
     }
 
     public class Weapon : Wearable
     {
         public double Damage { get; set; }
-        private readonly List<Spells.Passive> _passiveSpells = new List<Spells.Passive>();
+        private readonly List<SpellModule.Passive> _passiveSpells = new List<SpellModule.Passive>();
 
         public Weapon(string title, ItemTypes itemType) : base(title, itemType, ItemSlot.MainHand)
         {
@@ -98,7 +160,7 @@
             Damage = 0;
         }
 
-        public void AddPassiveSpell(Spells.Passive passiveSpell)
+        public void AddPassiveSpell(SpellModule.Passive passiveSpell)
         {
             _passiveSpells.Add(passiveSpell);
         }

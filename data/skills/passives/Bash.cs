@@ -1,6 +1,6 @@
-using Spells;
-using Spells.Effects.DoT;
-using Entities;
+using SpellModule;
+using SpellModule.Effects.DoT;
+using EntityModule;
 using CombatModule;
 
 public class Bash : Passive {

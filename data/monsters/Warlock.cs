@@ -1,4 +1,4 @@
-using Entities;
+using EntityModule;
 namespace Monsters.Warlock;
 public class Warlock : Monster {
     public Warlock() : base("Warlock") {

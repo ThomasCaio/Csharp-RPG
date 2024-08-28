@@ -1,6 +1,6 @@
-namespace Places;
+namespace PlaceModule;
 using Monsters.Factory;
-using Entities;
+using EntityModule;
 using static System.Linq.Enumerable;
 
 public enum PlaceType {
@@ -24,11 +24,11 @@ public abstract class City : Place {
 
 public abstract class HuntingPlace : Place {
     public int RequiredLevel;
-    public List<Entities.Monster>? NormalMonsters;
-    public List<Entities.Monster>? MediumMonsters;
+    public List<EntityModule.Monster>? NormalMonsters;
+    public List<EntityModule.Monster>? MediumMonsters;
     
-    public List<Entities.Monster>? HardMonsters;
-    public List<Entities.Monster>? Boss;
+    public List<EntityModule.Monster>? HardMonsters;
+    public List<EntityModule.Monster>? Boss;
 
     public HuntingPlace(string name, RPG.Game parent) : base(name, parent) {}
 

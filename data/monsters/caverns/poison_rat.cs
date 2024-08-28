@@ -1,4 +1,4 @@
-using Entities;
+using EntityModule;
 namespace Monsters.All;
 public class PoisonRat : Monster {
     public PoisonRat() : base("Poison Rat") {

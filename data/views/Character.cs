@@ -1,5 +1,5 @@
 namespace Views;
-using Items;
+using ItemModule;
 using Spectre.Console;
 
 
@@ -11,9 +11,27 @@ public class CharacterView : View {
     }
 
     public override void Render() {
+        var player = Parent.Player!;
         AnsiConsole.Clear();
         Log.Render();
-        var player = Parent.Player;
+        Grid grid = new Grid();
+        Table table = new Table().Width(60).Title($"{player.Name}").HideHeaders();
+        table.AddColumn("Attributes");
+        table.AddColumn("Values");
+
+        table.AddRow(new Text("Max Health"), new Text($"{player.MaxHealth}"));
+        // table.AddRow(new Text("Max Mana"), new Text($"{player.MaxMana}"));
+        table.AddRow(new Text("Damage"), new Text($"{player.TotalDamage}"));
+        table.AddRow(new Text("Defense"), new Text($"{player.Defense}"));
+        table.AddRow(new Text("Armor"), new Text($"{player.Armor}"));
+        table.AddRow(new Text("Physical Resistance"), new Text($"{player.PhysicalResistance}"));
+        table.AddRow(new Text("Fire Resistance"), new Text($"{player.FireResistance}"));
+        table.AddRow(new Text("Water Resistance"), new Text($"{player.WaterResistance}"));
+        table.AddRow(new Text("Air Resistance"), new Text($"{player.AirResistance}"));
+        table.AddRow(new Text("Earth Resistance"), new Text($"{player.EarthResistance}"));
+
+        AnsiConsole.Write(table);
+
         if (player != null) {
             var selection = new SelectionPrompt<string>();
             selection.AddChoice("Equipped items");
@@ -42,16 +60,16 @@ public class CharacterView : View {
         AnsiConsole.Clear();
         var player = Parent.Player;
         if (player != null) {
-            var options = new SelectionPrompt<Items.Item>().UseConverter(item => item.Name).Title("Equipped Items");
+            var options = new SelectionPrompt<ItemModule.Item>().UseConverter(item => item.Name).Title("Equipped Items");
 
-            foreach (Items.Item? item in player.Body.Values) {
+            foreach (ItemModule.Item? item in player.Body.Values) {
                 if (item != null) {
                     options.AddChoice(item);
                 }
             }
-            var back = Items.Item.BlankItem("Back");
+            var back = ItemModule.Item.BlankItem("Back");
             options.AddChoice(back);
-            Items.Item option = AnsiConsole.Prompt(options);
+            ItemModule.Item option = AnsiConsole.Prompt(options);
             if (option == back) {
                 return;
             }
@@ -72,7 +90,7 @@ public class CharacterView : View {
             Console.ReadKey();
             return;
         }
-        var spells = new SelectionPrompt<Spells.Spell>().UseConverter(s => s.Name).Title("Spellbook").AddChoices(spellbook);
+        var spells = new SelectionPrompt<SpellModule.Spell>().UseConverter(s => s.Name).Title("Spellbook").AddChoices(spellbook);
         var option = AnsiConsole.Prompt(spells);
         AnsiConsole.Clear();
         var g = new Grid();

@@ -1,12 +1,12 @@
 ﻿namespace RPG;
-using Entities;
-using Items.All;
-using Items.Factory;
+using EntityModule;
+using ItemModule.All;
+using ItemModule.Factory;
 using Views;
-using Places;
+using PlaceModule;
 using FileModule;
 using Logging;
-
+using Spells;
 
 class Program {
     public static void Main(string[] args) {
@@ -43,7 +43,7 @@ public class Debug
 
     public static void TestSetup(Game game)
     {
-        game.Player!.Inventory.Add(new DemonSword());
+        game.Player!.Inventory.Add(new TestSword());
         game.Player!.Equip(game.Player.Inventory.Get(0));
         game.Player!.Experience += 100000;
         game.Player!.Scores.Add("Forest", 150);

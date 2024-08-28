@@ -1,4 +1,4 @@
-using Entities;
+using EntityModule;
 namespace Monsters.All;
 public class Elf : Monster {
     public Elf() : base("Elf") {

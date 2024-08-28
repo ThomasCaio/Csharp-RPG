@@ -1,5 +1,5 @@
-using Entities;
-using Spells;
+using EntityModule;
+using SpellModule;
 namespace Monsters.All;
 public class DwarfMagician : Monster {
     public DwarfMagician() : base("Dwarf Magician") {

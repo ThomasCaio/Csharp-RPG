@@ -1,7 +1,7 @@
-﻿namespace Entities;
-using Items;
+﻿namespace EntityModule;
+using ItemModule;
 using CombatModule;
-using Spells;
+using SpellModule;
 using static System.Linq.Enumerable;
 using RPG;
 using Newtonsoft.Json;
@@ -23,28 +23,49 @@ public abstract class Creature {
     public List<Passive> Passives { get; } = new List<Passive>();
     public List<Effect> Effects { get; } = new List<Effect>();
 
-    [JsonProperty(Order = 1)]
     public double Health {
         get { return health; }
         // set { health = Math.Max(0, Math.Min(value, maxHealth)); } // Jeito correto, porém da bug pela ordem do deserialize que carrega primeiro o max health.
-        set { health = Math.Max(0, value); }
+        set
+        {
+            if (value >= MaxHealth)
+            {
+                health = MaxHealth;
+            }
+            else {
+                health = Math.Max(0, value);
+            }
+        }
     }
 
-    [JsonProperty(Order = -1)]
     public double MaxHealth {
         get { return maxHealth; }
         set {
-            maxHealth = value;
-            health = Math.Min(health, maxHealth);
+            if (value != maxHealth)
+            {
+                double healthPercentage = Math.Round(health / maxHealth, 2);
+                Logging.Debug.Write($"{healthPercentage}", "health");
+                maxHealth = value;
+                health = Math.Min(healthPercentage * maxHealth, maxHealth);
+            }
         }
     }
 
     public bool IsAlive => Health > 0;
 
-    public virtual double Damage { get { return BaseDamage * DamageModifier; } }
+    public virtual double Damage {get; set;}
+    public virtual double Armor {get; set;}
+    public virtual double Defense {get; set;}
+    public virtual double PhysicalResistance {get; set;}
+    public virtual double FireResistance {get; set;}
+    public virtual double EarthResistance {get; set;}
+    public virtual double WaterResistance {get; set;}
+        public virtual double AirResistance {get; set;}
+
+    public virtual double TotalDamage { get { return (BaseDamage + Damage) * DamageModifier; } }
     public virtual double DamageModifier { get { return 1; } }
 
-    public virtual double Defense { get { return BaseDefense * DefenseModifier; } }
+    public virtual double TotalDefense { get { return (BaseDefense + Defense) * DefenseModifier; } }
     public virtual double DefenseModifier { get { return 1; } }
 
     public List<Passive> OnHitPassives { get { return Passives.Where(p => p.Type == PassiveType.OnHit).ToList(); } }
@@ -101,6 +122,7 @@ public class Character : Creature
             }
             _experience = value;
         }}
+
     public int Level = 1;
     public int Gold = 0;
     public Dictionary<ItemSlot, Item?> Body = new Dictionary<ItemSlot, Item?>
@@ -125,29 +147,33 @@ public class Character : Creature
         Health += 5;
     }
 
-    public override double Damage
-    {
-        get
-        {
-            double damage = Body.Values.OfType<Weapon>().Sum(weapon => weapon.Damage);
-            return (BaseDamage + damage) * DamageModifier;
-        }
-    }
+    // public override double Damage
+    // {
+    //     get
+    //     {
+    //         double damage = Body.Values.OfType<Weapon>().Sum(weapon => weapon.Damage);
+    //         return (BaseDamage + damage) * DamageModifier;
+    //     }
+    // }
 
-    public override double Defense
-    {
-        get
-        {
-            double itemDefense = Body.Values.OfType<Equipment>().Sum(armor => armor.Defense);
-            return (BaseDefense + itemDefense) * DefenseModifier;
-        }
-    }
+    // public override double Defense
+    // {
+    //     get
+    //     {
+    //         double itemDefense = Body.Values.OfType<Equipment>().Sum(armor => armor.Defense);
+    //         return (BaseDefense + itemDefense) * DefenseModifier;
+    //     }
+    // }
 
     public void Equip(Item item) {
         Item? equipped = Body.GetValueOrDefault(item.Slot, null);
         if (equipped == null) {
             Body[item.Slot] = item;
             Inventory.Remove(item);
+            if (item is Wearable equipment)
+            {
+                equipment.AddAttributes(this);
+            }
             Game.Log.Add($"{item.Name} equipped.");
         }
         else {
@@ -161,6 +187,10 @@ public class Character : Creature
         if (equipped != null) {
             Body[item.Slot] = null;
             Inventory.Add(item);
+            if (item is Wearable equipment)
+            {
+                equipment.RemoveAttributes(this);
+            }
             Game.Log.Add($"{item.Name} unequipped.");
             return;
         }

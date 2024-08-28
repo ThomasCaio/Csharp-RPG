@@ -1,8 +1,9 @@
-namespace Items.All;
+namespace ItemModule.All;
 
 public class LeatherHelmet : Helmet {
     public LeatherHelmet() : base("Leather Helmet") {
-        Defense = 1;
+        Attributes.Add(new ItemAttribute("Defense", 1));
+
         Price = 25;
     }
 }

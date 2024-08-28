@@ -1,6 +1,6 @@
 namespace Views;
 using Spectre.Console;
-using Places;
+using PlaceModule;
 using Logging;
 
 public class HuntingPlacesView : View {
@@ -87,7 +87,7 @@ public class HuntingPlacesView : View {
         {
             int placeScore = player.Scores.GetValueOrDefault(place.Name, 0);
             global::Logging.Debug.Write($"Place: {place}");
-            view.Setup(new Entities.Party(player), place.NewParty(placeScore), place);
+            view.Setup(new EntityModule.Party(player), place.NewParty(placeScore), place);
             view.Render();
             UpdateLastHunt(place);
         }

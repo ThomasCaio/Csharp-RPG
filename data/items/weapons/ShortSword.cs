@@ -1,4 +1,4 @@
-namespace Items.All;
+namespace ItemModule.All;
 
 public class ShortSword : Sword{
     public ShortSword() : base("Short Sword"){

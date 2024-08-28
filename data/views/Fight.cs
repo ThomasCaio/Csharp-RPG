@@ -1,7 +1,7 @@
 namespace Views;
-using Spells;
+using SpellModule;
 using CombatModule;
-using Entities;
+using EntityModule;
 using Spectre.Console;
 using static System.Linq.Enumerable;
 
@@ -9,7 +9,7 @@ public class FightView : View {
     Party? PlayerParty;
     Party? MonsterParty;
     GameLog Log;
-    public Places.HuntingPlace? FightPlace;
+    public PlaceModule.HuntingPlace? FightPlace;
 
 
     public FightView(RPG.Game parent) : base(parent) {
@@ -18,7 +18,7 @@ public class FightView : View {
         Log = new GameLog(parent);
     }
 
-    public void Setup(Party playerParty, Party monsterParty, Places.HuntingPlace place) {
+    public void Setup(Party playerParty, Party monsterParty, PlaceModule.HuntingPlace place) {
         PlayerParty = playerParty;
         MonsterParty = monsterParty;    
         FightPlace = place;

@@ -1,6 +1,6 @@
 namespace Views;
 using Spectre.Console;
-using Items;
+using ItemModule;
 
 public class InventoryView : View {
     public GameLog Log;
@@ -15,7 +15,7 @@ public class InventoryView : View {
             var table = new Table().Width(60).Title("Equipments").HideHeaders();
             table.AddColumn("Slot").Width(60);
             table.AddColumn("Item").Width(60);
-            foreach (Items.ItemSlot slot in player.Body.Keys) {
+            foreach (ItemModule.ItemSlot slot in player.Body.Keys) {
                 var item = player.Body[slot];
                 if (item != null) {
                     table.AddRow(new Text(item.Slot.ToString()), new Text(item.Name));
@@ -25,14 +25,14 @@ public class InventoryView : View {
                 AnsiConsole.Write(table);
             }
 
-            var options = new SelectionPrompt<Items.Item>().UseConverter(item => item.Name).Title("Inventory");
+            var options = new SelectionPrompt<ItemModule.Item>().UseConverter(item => item.Name).Title("Inventory");
 
-            foreach (Items.Item item in player.Inventory.Items) {
+            foreach (ItemModule.Item item in player.Inventory.Items) {
                 options.AddChoice(item);
             }
-            var back = Items.Item.BlankItem("Back");
+            var back = ItemModule.Item.BlankItem("Back");
             options.AddChoice(back);
-            Items.Item option = AnsiConsole.Prompt(options);
+            ItemModule.Item option = AnsiConsole.Prompt(options);
             if (option == back) {
                 return;
             }

@@ -60,7 +60,7 @@ public class GameView : View {
         Render();
     }
 
-    public Table RenderCharacterStats(Entities.Character character) {
+    public Table RenderCharacterStats(EntityModule.Character character) {
         Table t = new Table().Border(TableBorder.Simple).HideHeaders().Width(60).Title("Character");
         t.AddColumn(new TableColumn("Attributes"));
         t.AddColumn(new TableColumn("Values"));
@@ -76,7 +76,7 @@ public class GameView : View {
     }
 
 
-    public void DeadPlayer(Entities.Character player)
+    public void DeadPlayer(EntityModule.Character player)
     {
 
     }

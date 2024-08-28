@@ -1,5 +1,5 @@
-namespace Spells;
-using Entities;
+namespace SpellModule;
+using EntityModule;
 using CombatModule;
 using Newtonsoft.Json;
 

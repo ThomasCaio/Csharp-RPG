@@ -1,5 +1,5 @@
 namespace Views;
-using Items;
+using ItemModule;
 using Spectre.Console;
 
 public class ShopView : View {

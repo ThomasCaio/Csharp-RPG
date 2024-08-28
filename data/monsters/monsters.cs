@@ -1,5 +1,5 @@
 namespace Monsters.Factory;
-using Entities;
+using EntityModule;
 
 using System;
 using System.Linq;

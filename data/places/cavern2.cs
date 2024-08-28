@@ -1,5 +1,5 @@
-using Places;
-using Entities;
+using PlaceModule;
+using EntityModule;
 using Monsters.All;
 
 public class Cavern2 : HuntingPlace {

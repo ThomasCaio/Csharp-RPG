@@ -59,10 +59,10 @@ public class InventoryView : View {
             prompt.AddChoice("Back");
             var option = AnsiConsole.Prompt(prompt);
             if (option == "Equip") {
-                player.Equip(item);
+                player.Equip((Wearable)item);
             }
             else if (option == "Unequip") {
-                player.Unequip(item);
+                player.Unequip((Wearable)item);
             }
             else if (option == "Use") {
                 item.Use(player);

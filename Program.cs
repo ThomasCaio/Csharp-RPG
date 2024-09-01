@@ -6,7 +6,8 @@ using Views;
 using PlaceModule;
 using FileModule;
 using Logging;
-using Spells;
+using SpellModule;
+using ItemModule;
 
 class Program {
     public static void Main(string[] args) {
@@ -44,7 +45,7 @@ public class Debug
     public static void TestSetup(Game game)
     {
         game.Player!.Inventory.Add(new TestSword());
-        game.Player!.Equip(game.Player.Inventory.Get(0));
+        game.Player!.Equip((Wearable)game.Player.Inventory.Get(0));
         game.Player!.Experience += 100000;
         game.Player!.Scores.Add("Forest", 150);
         game.Player!.Scores.Add("Cavern", 150);
@@ -64,7 +65,7 @@ public static class Build
     public static void DefaultSetup(Game game)
     {
         game.Player!.Inventory.Add(new ShortSword());
-        game.Player!.Equip(game.Player!.Inventory.Get(0));
+        game.Player!.Equip((Wearable)game.Player!.Inventory.Get(0));
     }
 }
 

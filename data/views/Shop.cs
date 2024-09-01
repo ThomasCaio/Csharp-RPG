@@ -15,33 +15,81 @@ public class ShopView : View {
         AnsiConsole.Clear();
         Log.Render();
 
-        // Simplify selection prompt creation by chaining methods
         var selection = new SelectionPrompt<string>()
             .Title("What would you like to buy?")
             .PageSize(10)
             .AddChoices(new[] {"Equipments", "Weapons", "Shields", "Consumables", "Back"});
 
         var option = AnsiConsole.Prompt(selection);
-        if (option != "Back") {
-            ShopItemType(option);
-            Render();
+
+        if (option == "Back")
+        {
+            return;
         }
+
+        string subOption = string.Empty;
+
+        if (option == "Equipments")
+        {
+            var s = new SelectionPrompt<string>()
+            .Title("What would you like to buy?")
+            .PageSize(10)
+            .AddChoices(new[] {"Helmet", "Armor", "Legs", "Boots", "Back"});
+            subOption = AnsiConsole.Prompt(s);
+            if (subOption == "Back") {
+                Render();
+                return;
+            }
+        }
+        else if (option == "Weapons")
+        {
+            var s = new SelectionPrompt<string>()
+            .Title("What would you like to buy?")
+            .PageSize(10)
+            .AddChoices(new[] {"Sword", "Axe", "Club", "Back"});
+            subOption = AnsiConsole.Prompt(s);
+            if (subOption == "Back") {
+                Render();
+                return;
+            }
+        }
+        else if (option == "Consumables")
+        {
+            option = "Consumable";
+            ShopItemType(option);
+        }
+
+        else if (option == "Shields")
+        {
+            ShopItemType("Shield");    
+        }
+        
+        if (!string.IsNullOrEmpty(subOption) && subOption != "Back")
+        {
+            ShopItemType(subOption);
+        }
+        Logging.Debug.Write($"{option} {subOption}", "option");
+        Render();
     }
 
     public void ShopItemType(string itemType) {
         Enum.TryParse(itemType, out ItemTypes it);
-        var itemList = Parent.itemFactory.GetItems(it);
+        Logging.Debug.Write($"{itemType} - {it}", "shop");
+        var itemList = new List<Item>(Parent.itemFactory.GetItems(it)) {Item.BlankItem("Back")};
+
         AnsiConsole.Clear();
 
-        // Simplify selection prompt creation by chaining methods
         var selection = new SelectionPrompt<Item>()
             .Title($"Select a {itemType} to buy:")
             .PageSize(10)
-            .UseConverter(item => $"{item.Name}\t${item.Price}")
+            .UseConverter(item => item.Name == "Back" ? "Back" : $"{item.Name}\t\t\t${item.Price}")
             .AddChoices(itemList);
 
         Item option = AnsiConsole.Prompt(selection);
-        if (option != null) {
+
+        if (option.Name == "Back") {
+            return;
+        } else if (option != null) {
             Buy(option);
         }
     }

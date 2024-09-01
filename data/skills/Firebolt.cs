@@ -1,5 +1,5 @@
-using Spells;
-using Entities;
+using SpellModule;
+using EntityModule;
 using CombatModule;
 
 public class Firebolt : Spell {

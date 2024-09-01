@@ -1,4 +1,5 @@
 ﻿using EntityModule;
+using RPG;
 
 namespace ItemModule
 {
@@ -85,14 +86,14 @@ namespace ItemModule
     {
         public string Name { get; }
         public ObjectTypes ObjectType { get; }
-        public ItemSlot Slot { get; }
+        public ItemTypes ItemType;
         public int Price { get; set; }
 
-        public Item(string title, ObjectTypes type, ItemSlot slot)
+        public Item(string title, ObjectTypes type, ItemTypes itemType)
         {
             Name = title;
             ObjectType = type;
-            Slot = slot;
+            ItemType = itemType;
         }
 
         public virtual Dictionary<string, string> Look()
@@ -108,11 +109,16 @@ namespace ItemModule
             return (Item)this.MemberwiseClone();
         }
 
-        public virtual void Use(EntityModule.Creature creature) { }
+        public virtual void Use(Character character) { }
+        
+        public virtual void UseText(Character character) 
+        {
+            Game.Log.Add($"{character.Name} used {this.Name}.");
+        }
 
         public static Item BlankItem(string title)
         {
-            return new Item(title, ObjectTypes.None, ItemSlot.None);
+            return new Item(title, ObjectTypes.None, ItemTypes.Other);
         }
 
         public static string TitleOrWhiteSpace(Item? item)
@@ -123,14 +129,13 @@ namespace ItemModule
 
     public class Wearable : Item
     {
-        public ItemTypes ItemType;
+        public ItemSlot Slot { get; }
         public List<IItemAttribute> Attributes { get; } = new List<IItemAttribute>();
 
-        public Wearable(string title, ItemTypes itemType, ItemSlot itemSlot) : base(title, ObjectTypes.Wearable, itemSlot)
+        public Wearable(string title, ItemTypes itemType, ItemSlot itemSlot) : base(title, ObjectTypes.Wearable, itemType )
         {
-            ItemTypes ItemType = itemType;
+            Slot = itemSlot;
         }
-
         public void AddAttributes(Character character)
         {
             foreach (var attribute in Attributes)
@@ -151,14 +156,10 @@ namespace ItemModule
 
     public class Weapon : Wearable
     {
-        public double Damage { get; set; }
         private readonly List<SpellModule.Passive> _passiveSpells = new List<SpellModule.Passive>();
 
         public Weapon(string title, ItemTypes itemType) : base(title, itemType, ItemSlot.MainHand)
-        {
-            ItemTypes ItemType = itemType;
-            Damage = 0;
-        }
+        {}
 
         public void AddPassiveSpell(SpellModule.Passive passiveSpell)
         {
@@ -170,7 +171,7 @@ namespace ItemModule
             var dict = new Dictionary<string, string>
             {
                 { "Title", Name },
-                { "Damage", $"{Damage}" }
+                { "Damage", $"{0}" } // Arrumar o dano no look
             };
             foreach (var p in _passiveSpells)
             {
@@ -182,12 +183,8 @@ namespace ItemModule
 
     public class Equipment : Wearable
     {
-        public int Defense { get; set; }
-
         public Equipment(string name, ItemTypes itemType, ItemSlot itemSlot) : base(name, itemType, itemSlot)
-        {
-            ItemTypes EquipmentType = itemType;
-        }
+        {}
     }
 
     public class Sword : Weapon
@@ -195,11 +192,58 @@ namespace ItemModule
         public Sword(string title) : base(title, ItemTypes.Sword){}
     }
 
+    public class Shield : Equipment
+    {
+        public Shield(string name) : base(name, ItemTypes.Shield, ItemSlot.OffHand) {}
+    }
+
     public class Helmet : Equipment
     {
-        public Helmet(string name) : base(name, ItemTypes.Helmet, ItemSlot.Head)
+        public Helmet(string name) : base(name, ItemTypes.Helmet, ItemSlot.Head) {}
+    }
+
+    public class Armor : Equipment
+    {
+        public Armor(string name) : base(name, ItemTypes.Armor, ItemSlot.Chest) {}
+    }
+
+    public class Legs : Equipment
+    {
+        public Legs(string name) : base(name, ItemTypes.Legs, ItemSlot.Legs) {}
+    }
+
+    public class Boots : Equipment
+    {
+        public Boots(string name) : base(name, ItemTypes.Boots, ItemSlot.Boots) {}
+    }
+
+    public class Consumable : Item
+    {
+        public Consumable(string title) : base(title, ObjectTypes.Usable, ItemTypes.Consumable){}
+    }
+
+    public abstract class Potion : Consumable
+    {
+        public Potion(string title) : base(title){}
+
+        public virtual int Formula(Character character)
         {
-       
+            return 0;
+        }
+
+        public override void Use(Character character)
+        {
+            PreAction(character);
+            Action(character);
+            PostAction(character);
+            Destroy(character);
+        }
+        public virtual void PreAction(Character character){}
+        public abstract void Action(Character character);
+        public virtual void PostAction(Character character){}
+        public virtual void Destroy(Character character)
+        {
+            character.Inventory.Remove(this);
         }
     }
 }

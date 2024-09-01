@@ -4,7 +4,9 @@ using Monsters.All;
 
 public class Forest : HuntingPlace {
     public Forest(RPG.Game parent) : base("Forest", parent) {
-        NormalMonsters = new List<Monster> { new Rat() };
+        NormalMonsters = new List<Monster> { 
+            new Rat() 
+        };
 
         MediumMonsters = new List<Monster> {
             new Spider(),

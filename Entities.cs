@@ -125,7 +125,7 @@ public class Character : Creature
 
     public int Level = 1;
     public int Gold = 0;
-    public Dictionary<ItemSlot, Item?> Body = new Dictionary<ItemSlot, Item?>
+    public Dictionary<ItemSlot, Wearable?> Body = new Dictionary<ItemSlot, Wearable?>
     {
         [ItemSlot.Head] = null,
         [ItemSlot.Chest] = null,
@@ -165,8 +165,8 @@ public class Character : Creature
     //     }
     // }
 
-    public void Equip(Item item) {
-        Item? equipped = Body.GetValueOrDefault(item.Slot, null);
+    public void Equip(Wearable item) {
+        Wearable? equipped = Body.GetValueOrDefault(item.Slot, null);
         if (equipped == null) {
             Body[item.Slot] = item;
             Inventory.Remove(item);
@@ -182,7 +182,7 @@ public class Character : Creature
         }
     }
 
-    public void Unequip(Item item) {
+    public void Unequip(Wearable item) {
         Item? equipped = Body[item.Slot];
         if (equipped != null) {
             Body[item.Slot] = null;

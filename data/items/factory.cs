@@ -10,9 +10,14 @@ public class ItemFactory
             this.RegisterItems();
         }
 
-        public IEnumerable<Item> GetItems(ItemTypes itemType)
+        public List<Item> GetItems(ItemTypes itemType)
         {
-            return this.items[itemType];
+            Logging.Debug.Write($"{itemType}", "factory");
+            var itemList = this.items.Values
+            .SelectMany(items => items)
+            .Where(item => item is Item i && i.ItemType == itemType)
+            .ToList();
+            return itemList;
         }
 
         public Item CreateItem(string itemName)
@@ -29,14 +34,26 @@ public class ItemFactory
 
         private void RegisterItems()
         {
+            // Weapon
             this.RegisterItem(new ShortSword());
             this.RegisterItem(new TestSword());
 
+            // Equipments
             this.RegisterItem(new LeatherHelmet());
+            this.RegisterItem(new LeatherArmor());
+            this.RegisterItem(new LeatherLegs());
+            this.RegisterItem(new LeatherBoots());
+
+            // Shields
+            this.RegisterItem(new WoodenShield());
+
+            // Consumables
+            this.RegisterItem(new SmallHealthPotion());
         }
 
-        private void RegisterItem(Wearable item)
+        private void RegisterItem(Item item)
         {
+            Logging.Debug.Write($"{item.ItemType}", "factory");
             this.AddItem(item.ItemType, item);
         }
 

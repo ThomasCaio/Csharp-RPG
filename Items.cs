@@ -29,7 +29,7 @@ namespace ItemModule
             var property = character.GetType().GetProperty(Name.Replace(" ", ""));
             if (property != null)
             {
-                double currentValue = (double)property.GetValue(character)!;
+                int currentValue = (int)property.GetValue(character)!;
                 property.SetValue(character, currentValue + Value);
             }
         }
@@ -39,7 +39,7 @@ namespace ItemModule
             var property = character.GetType().GetProperty(Name.Replace(" ", ""));
             if (property != null)
             {
-                double currentValue = (double)property.GetValue(character)!;
+                int currentValue = (int)property.GetValue(character)!;
                 property.SetValue(character, currentValue - Value);
             }
         }
@@ -87,7 +87,8 @@ namespace ItemModule
         public string Name { get; }
         public ObjectTypes ObjectType { get; }
         public ItemTypes ItemType;
-        public int Price { get; set; }
+        public int BuyPrice { get; set; }
+        public int SellPrice { get; set; }
 
         public Item(string title, ObjectTypes type, ItemTypes itemType)
         {
@@ -190,6 +191,31 @@ namespace ItemModule
     public class Sword : Weapon
     {
         public Sword(string title) : base(title, ItemTypes.Sword){}
+    }
+
+    public class Axe : Weapon
+    {
+        public Axe(string title) : base(title, ItemTypes.Axe){}
+    }
+
+    public class Club : Weapon
+    {
+        public Club(string title) : base(title, ItemTypes.Sword){}
+    }
+
+    public class TwoHandedSword : Weapon
+    {
+        public TwoHandedSword(string title) : base(title, ItemTypes.ThSword){}
+    }
+
+    public class TwoHandedAxe : Weapon
+    {
+        public TwoHandedAxe(string title) : base(title, ItemTypes.ThAxe){}
+    }
+
+    public class TwoHandedClub : Weapon
+    {
+        public TwoHandedClub(string title) : base(title, ItemTypes.ThClub){}
     }
 
     public class Shield : Equipment

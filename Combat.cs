@@ -9,9 +9,9 @@ public class DamageSet {
     public DamageSet(double value, Element element) {
         SetElement(value, element);
     }
-    public double TotalDamage() {
-        double Dmg = 0;
-        foreach (double d in _damages.Values) {
+    public int TotalDamage() {
+        int Dmg = 0;
+        foreach (int d in _damages.Values) {
             Dmg += d;
         }
         return Dmg;
@@ -97,22 +97,68 @@ public static class AttackSystem {
         RPG.Game.Log.Add($"{source.Name} missed!");
     }
     public static void Resistance(Creature source, Creature target, DamageSet damage, bool showLog=true) {
+        var physicalDamage = damage.GetElement(Element.Physical);
+        var magicalDaamge = damage.GetElement(Element.Magical);
+
+        if (target is Character character)
+        {
+            double physical_resistance = character.PhysicalResistance;
+            damage.SetElement(physicalDamage, Element.Physical);
+
+            if (RPG.Game.Debug) 
+            {
+                if (character.PhysicalResistance > 0)
+                {
+                    RPG.Game.Log.Add($"DEBUG: {target.Name}'s physical resistance reduces the damage by {physical_resistance * 100:F1}%.");
+                }
+            }
+        }
         Block(source, target, damage, showLog);
     }
     public static void Block(Creature source, Creature target, DamageSet damage, bool showLog=true) {
+        var physicalDamage = damage.GetElement(Element.Physical);
+        var magicalDamage = damage.GetElement(Element.Magical);
+
+        if (target is Character character)
+        {
+            double armor = character.Armor;
+            physicalDamage -= armor;
+            damage.SetElement(physicalDamage, Element.Physical);
+            
+            if (RPG.Game.Debug) 
+            {
+                if (character.Armor > 0)
+                {
+                    RPG.Game.Log.Add($"DEBUG: {target.Name}'s armor reduces the damage by {armor}.");
+                }
+            }
+        }
         Damage(source, target, damage, showLog);
     }
     public static void Damage(Creature source, Creature target, DamageSet damage, bool showLog=true) {
-        double health = target.Health - damage.TotalDamage();
-        if (showLog) {
-            RPG.Game.Log.Add($"{source.Name} hits {target.Name} in {damage.TotalDamage()} damage.");
-        }
-        if (health <= 0) {
+        var dmg = damage.TotalDamage();
+        if (dmg > 0)
+        {
+            int health = target.Health - damage.TotalDamage();
+            if (showLog) {
+                RPG.Game.Log.Add($"{source.Name} hits {target.Name} in {damage.TotalDamage()} damage.");
+            }
+            
+            if (health <= 0) {
+                target.Health = health;
+                Death(source, target, damage);
+                return;
+            }
             target.Health = health;
-            Death(source, target, damage);
-            return;
         }
-        target.Health = health;
+
+        else 
+        {
+            if (showLog) {
+                RPG.Game.Log.Add($"{target.Name} blocked all {source.Name} damage.");
+            }
+        }
+        
     }
 
     public static void Death(Creature source, Creature target, DamageSet damage) {

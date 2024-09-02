@@ -13,17 +13,17 @@ public enum CreatureType {
 }
 
 public abstract class Creature {
-    private double maxHealth = 100;
-    private double health = 100;
+    private int maxHealth = 100;
+    private int health = 100;
 
     public string Name { get; set; }
     public CreatureType Type { get; set; }
-    public double BaseDamage { get; set; } = 1;
-    public double BaseDefense { get; set; } = 0;
+    public int BaseDamage { get; set; } = 1;
+    public int BaseDefense { get; set; } = 0;
     public List<Passive> Passives { get; } = new List<Passive>();
     public List<Effect> Effects { get; } = new List<Effect>();
 
-    public double Health {
+    public int Health {
         get { return health; }
         // set { health = Math.Max(0, Math.Min(value, maxHealth)); } // Jeito correto, porém da bug pela ordem do deserialize que carrega primeiro o max health.
         set
@@ -38,35 +38,35 @@ public abstract class Creature {
         }
     }
 
-    public double MaxHealth {
+    public int MaxHealth {
         get { return maxHealth; }
         set {
             if (value != maxHealth)
             {
-                double healthPercentage = Math.Round(health / maxHealth, 2);
+                double healthPercentage = Math.Round((double)health / maxHealth, 2);
                 Logging.Debug.Write($"{healthPercentage}", "health");
                 maxHealth = value;
-                health = Math.Min(healthPercentage * maxHealth, maxHealth);
+                health = (int)Math.Min(healthPercentage * maxHealth, maxHealth);
             }
         }
     }
 
     public bool IsAlive => Health > 0;
 
-    public virtual double Damage {get; set;}
-    public virtual double Armor {get; set;}
-    public virtual double Defense {get; set;}
-    public virtual double PhysicalResistance {get; set;}
-    public virtual double FireResistance {get; set;}
-    public virtual double EarthResistance {get; set;}
-    public virtual double WaterResistance {get; set;}
-        public virtual double AirResistance {get; set;}
+    public virtual int Damage {get; set;}
+    public virtual int Armor {get; set;}
+    public virtual int Defense {get; set;}
+    public virtual int PhysicalResistance {get; set;}
+    public virtual int FireResistance {get; set;}
+    public virtual int EarthResistance {get; set;}
+    public virtual int WaterResistance {get; set;}
+    public virtual int AirResistance {get; set;}
 
-    public virtual double TotalDamage { get { return (BaseDamage + Damage) * DamageModifier; } }
-    public virtual double DamageModifier { get { return 1; } }
+    public virtual int TotalDamage { get { return (BaseDamage + Damage) * DamageModifier; } }
+    public virtual int DamageModifier { get { return 1; } }
 
-    public virtual double TotalDefense { get { return (BaseDefense + Defense) * DefenseModifier; } }
-    public virtual double DefenseModifier { get { return 1; } }
+    public virtual int TotalDefense { get { return (BaseDefense + Defense) * DefenseModifier; } }
+    public virtual int DefenseModifier { get { return 1; } }
 
     public List<Passive> OnHitPassives { get { return Passives.Where(p => p.Type == PassiveType.OnHit).ToList(); } }
 
@@ -107,11 +107,11 @@ public class Inventory {
 
 public class Character : Creature
 {
-    public double NextLevel = 100;
-    public double _experience = 0;
+    public int NextLevel = 100;
+    public int _experience = 0;
 
     public List<Spell> Spellbook = new List<Spell>();
-    public double Experience {
+    public int Experience {
         get{return Convert.ToInt32(_experience);}
         set{
             while (value >= NextLevel) {

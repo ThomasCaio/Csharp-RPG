@@ -82,7 +82,7 @@ public class ShopView : View {
         var selection = new SelectionPrompt<Item>()
             .Title($"Select a {itemType} to buy:")
             .PageSize(10)
-            .UseConverter(item => item.Name == "Back" ? "Back" : $"{item.Name}\t\t\t${item.Price}")
+            .UseConverter(item => item.Name == "Back" ? "Back" : $"{item.Name}\t\t\t${item.BuyPrice}")
             .AddChoices(itemList);
 
         Item option = AnsiConsole.Prompt(selection);
@@ -97,13 +97,13 @@ public class ShopView : View {
     public void Buy(Item item) {
         var player = Parent.Player;
         if (player != null) {
-            if (player.Gold >= item.Price) {
+            if (player.Gold >= item.BuyPrice) {
                 player.Inventory.Add(item);
-                player.Gold -= item.Price;
-                Log.AddEvent($"You bought {item.Name} for ${item.Price}.");
+                player.Gold -= item.BuyPrice;
+                Log.AddEvent($"You bought {item.Name} for ${item.BuyPrice}.");
             }
             else {
-                Log.AddEvent($"You don't have enough gold to buy {item.Name}. It costs ${item.Price}.");
+                Log.AddEvent($"You don't have enough gold to buy {item.Name}. It costs ${item.BuyPrice}.");
             }
         }
     }

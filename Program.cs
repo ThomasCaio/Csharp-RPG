@@ -35,8 +35,7 @@ public class Test
 public class Debug
 {
     public static void Run() {
-        Game g = new Game(TestSetup);
-        g.Debug = true;
+        Game g = new Game(TestSetup, true);
         string now = DateTime.Now.ToString("---- (dd-MM-yyyy HH:mm:ss) ----" + Environment.NewLine);
         Logging.Debug.Write($"{now}");
         g.Run();
@@ -64,7 +63,7 @@ public static class Build
 
     public static void DefaultSetup(Game game)
     {
-        game.Player!.Inventory.Add(new ShortSword());
+        game.Player!.Inventory.Add(new Knife());
         game.Player!.Equip((Wearable)game.Player!.Inventory.Get(0));
     }
 }
@@ -80,10 +79,11 @@ public class Game {
     public ItemFactory itemFactory;
 
     public Action<Game>? gSetup;
-    public bool Debug = false;
+    public static bool Debug;
 
-    public Game(Action<Game>? func=null) {
+    public Game(Action<Game>? func=null, bool debug=false) {
         gSetup = func;
+        Debug = debug;
 
         Player = null;
 

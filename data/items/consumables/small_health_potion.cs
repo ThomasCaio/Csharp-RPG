@@ -5,7 +5,7 @@ namespace ItemModule.All;
 
 public class SmallHealthPotion : Potion {
     public SmallHealthPotion() : base("Small Health Potion") {
-        Price = 5;
+        BuyPrice = 5;
     }
 
     public override void Action(Character character)

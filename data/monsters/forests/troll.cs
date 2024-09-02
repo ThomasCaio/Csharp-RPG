@@ -5,7 +5,7 @@ public class Troll : Monster {
         MaxHealth = 60;
         BaseDamage = 4;
         BaseDefense = 2;
-        DropExp = 5;
+        DropExp = 15;
         DropGold = new Tuple<int, int>(4, 6);
     }
 }

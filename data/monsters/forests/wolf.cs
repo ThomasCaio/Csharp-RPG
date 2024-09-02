@@ -5,7 +5,7 @@ public class Wolf : Monster {
         MaxHealth = 50;
         BaseDamage = 4;
         Passives.Add(new CriticalStrike(25));
-        DropExp = 5;
+        DropExp = 15;
         DropGold = new Tuple<int, int>(2, 3);
     }
 }

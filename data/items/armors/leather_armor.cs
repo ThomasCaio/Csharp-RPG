@@ -3,6 +3,6 @@ namespace ItemModule.All;
 public class LeatherArmor : Armor {
     public LeatherArmor() : base("Leather Armor") {
         Attributes.Add(new ItemAttribute("Armor", 2));
-        Price = 25;
+        BuyPrice = 25;
     }
 }

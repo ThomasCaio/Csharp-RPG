@@ -4,6 +4,7 @@ public class Spider : Monster {
     public Spider() : base("Spider") {
         MaxHealth = 35;
         BaseDamage = 4;
-        DropExp = 3;
+        DropExp = 7;
+        DropGold = new Tuple<int, int>(3, 4);
     }
 }

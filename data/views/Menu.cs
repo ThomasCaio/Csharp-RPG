@@ -15,7 +15,7 @@ public class MenuView : View {
         Grid g = new Grid();
 
         g.AddColumn(new GridColumn());
-        string debug = Parent.Debug ? "[white][bold]DEBUG[/][/] " : "";
+        string debug = Game.Debug ? "[white][bold]DEBUG[/][/] " : "";
         g.AddRow(new Markup($"{debug}{Parent.GameName}"));
         g.AddEmptyRow();
 
@@ -80,7 +80,7 @@ public class MenuView : View {
                 }
                 if (CharacterName != null) {
                     CharacterName.Trim();
-                    if (Parent.Debug)
+                    if (Game.Debug)
                     {
                         CharacterName = "DEBUG " + CharacterName;
                     }
@@ -112,7 +112,7 @@ public class MenuView : View {
         foreach (var c in characters)
         {
             var marked = c;
-            if (Parent.Debug)
+            if (Game.Debug)
             if (c.Contains("DEBUG "))
             {
                 var debug = c.Substring(0, 5);

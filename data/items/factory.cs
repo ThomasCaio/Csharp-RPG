@@ -35,7 +35,7 @@ public class ItemFactory
         private void RegisterItems()
         {
             // Weapon
-            this.RegisterItem(new ShortSword());
+            this.RegisterItem(new Knife());
             this.RegisterItem(new TestSword());
 
             // Equipments

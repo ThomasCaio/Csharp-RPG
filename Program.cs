@@ -35,7 +35,7 @@ public class Test
 public class Debug
 {
     public static void Run() {
-        Game g = new Game(TestSetup, true);
+        Game g = new(TestSetup, true);
         string now = DateTime.Now.ToString("---- (dd-MM-yyyy HH:mm:ss) ----" + Environment.NewLine);
         Logging.Debug.Write($"{now}");
         g.Run();
@@ -57,7 +57,7 @@ public static class Build
 {
     public static void Run()
     {
-        Game g = new Game(DefaultSetup);
+        Game g = new(DefaultSetup);
         g.Run();
     }
 
@@ -71,11 +71,11 @@ public static class Build
 public class Game {
     public string GameName = "[yellow]C# RPG[/]";
     public Character? Player;
-    public static List<string> Log = new List<string>();
-    public static Random RNG = new Random();
+    public static List<string> Log = [];
+    public static Random RNG = new();
 
-    public Dictionary<string, View> GameViews = new Dictionary<string, View>();
-    public Dictionary<string, Place> Places = new Dictionary<string, Place>();
+    public Dictionary<string, View> GameViews = [];
+    public Dictionary<string, Place> Places = [];
     public ItemFactory itemFactory;
 
     public Action<Game>? gSetup;
@@ -109,6 +109,6 @@ public class Game {
         GameViews["Menu"].Render();
 
     }
-    public void Setup() {
+    public static void Setup() {
     }
 }

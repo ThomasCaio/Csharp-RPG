@@ -18,7 +18,7 @@ public class GameView : View {
 
             var table = RenderCharacterStats(player);
 
-            if (Log.Events.Count() > 0) {
+            if (Log.Events.Count > 0) {
                 grid.AddColumn(new GridColumn());
                 grid.AddRow(table, Log.Table);
 
@@ -60,7 +60,7 @@ public class GameView : View {
         Render();
     }
 
-    public Table RenderCharacterStats(EntityModule.Character character) {
+    public static Table RenderCharacterStats(EntityModule.Character character) {
         Table t = new Table().Border(TableBorder.Simple).HideHeaders().Width(60).Title("Character");
         t.AddColumn(new TableColumn("Attributes"));
         t.AddColumn(new TableColumn("Values"));

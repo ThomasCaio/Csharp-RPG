@@ -2,11 +2,9 @@ namespace Views;
 using Spectre.Console;
 using ItemModule;
 
-public class InventoryView : View {
-    public GameLog Log;
-    public InventoryView(RPG.Game parent) : base(parent) {
-        Log = new GameLog(parent);
-    }
+public class InventoryView(RPG.Game parent) : View(parent) {
+    public GameLog Log = new(parent);
+
     public override void Render() {
         AnsiConsole.Clear();
         Log.Render();
@@ -56,6 +54,10 @@ public class InventoryView : View {
                 prompt.AddChoice("Use");
             }
             prompt.AddChoice("Look");
+            if (item.SellPrice >= 0)
+            {
+                prompt.AddChoice($"Sell ${item.SellPrice}");
+            }
             prompt.AddChoice("Back");
             var option = AnsiConsole.Prompt(prompt);
             if (option == "Equip") {
@@ -70,12 +72,17 @@ public class InventoryView : View {
             else if (option == "Look") {
                 ItemDetails(item);
             }
+            else if (option.Contains("Sell"))
+            {
+                var shop = (ShopView)Parent.GameViews["Shop"];
+                shop.Sell(item);
+            }
         }
     }
 
-    public void ItemDetails(Item item) {
+    public static void ItemDetails(Item item) {
         AnsiConsole.Clear();
-        Table table = new Table();
+        Table table = new();
         table.AddColumns("Attribute", "Value").HideHeaders().Title($"Looking {item.Name}");
         var dict = item.Look();
         foreach (string attr in dict.Keys) {

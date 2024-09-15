@@ -1,4 +1,5 @@
 ﻿using EntityModule;
+using Newtonsoft.Json;
 using RPG;
 
 namespace ItemModule
@@ -13,16 +14,10 @@ namespace ItemModule
         void RemoveTo(Character character);
     }
 
-    public class ItemAttribute : IItemAttribute
+    public class ItemAttribute(string name, int value) : IItemAttribute
     {
-        public string Name { get; set; }
-        public int Value { get; set; }
-
-        public ItemAttribute(string name, int value)
-        {
-            Name = name;
-            Value = value;
-        }
+        public string Name { get; set; } = name;
+        public int Value { get; set; } = value;
 
         public void AddTo(Character character)
         {
@@ -82,20 +77,22 @@ namespace ItemModule
         None,
     }
 
-    public class Item
+    public class Item(string title, ObjectTypes type, ItemTypes itemType)
     {
-        public string Name { get; }
-        public ObjectTypes ObjectType { get; }
-        public ItemTypes ItemType;
+        public string Name { get; } = title;
+        public ObjectTypes ObjectType { get; } = type;
+        public ItemTypes ItemType = itemType;
         public int BuyPrice { get; set; }
-        public int SellPrice { get; set; }
-
-        public Item(string title, ObjectTypes type, ItemTypes itemType)
-        {
-            Name = title;
-            ObjectType = type;
-            ItemType = itemType;
+        private int _sellPrice = 0;
+        public int SellPrice { 
+            get {
+                if (_sellPrice > 0) return _sellPrice;
+                return (int)Math.Round(((double)BuyPrice / 2));
+            }
+            set => _sellPrice = value;
         }
+        [JsonIgnore]
+        public List<IItemAttribute> Attributes { get; } = [];
 
         public virtual Dictionary<string, string> Look()
         {
@@ -128,15 +125,38 @@ namespace ItemModule
         }
     }
 
-    public class Wearable : Item
+    public class Wearable(string title, ItemTypes itemType, ItemSlot itemSlot) : Item(title, ObjectTypes.Wearable, itemType )
     {
-        public ItemSlot Slot { get; }
-        public List<IItemAttribute> Attributes { get; } = new List<IItemAttribute>();
+        public ItemSlot Slot { get; } = itemSlot;
+        
 
-        public Wearable(string title, ItemTypes itemType, ItemSlot itemSlot) : base(title, ObjectTypes.Wearable, itemType )
+        private readonly List<SpellModule.Passive> _passiveSpells = [];
+
+        public void AddPassiveSpell(SpellModule.Passive passiveSpell)
         {
-            Slot = itemSlot;
+            _passiveSpells.Add(passiveSpell);
         }
+
+        public override Dictionary<string, string> Look()
+        {
+            var dict = new Dictionary<string, string>
+            {
+                { "Title", Name },
+            };
+            foreach(var d in Attributes)
+            {
+                if (!dict.ContainsKey(d.Name))
+                {
+                    dict.Add(d.Name, d.Value.ToString());
+                }
+            }
+            foreach (var p in _passiveSpells)
+            {
+                dict.Add($"Passive: {p.Name}", $"{p.Description}");
+            }
+            return dict;
+        }
+
         public void AddAttributes(Character character)
         {
             foreach (var attribute in Attributes)
@@ -155,103 +175,64 @@ namespace ItemModule
         }
     }
 
-    public class Weapon : Wearable
+    public class Weapon(string title, ItemTypes itemType) : Wearable(title, itemType, ItemSlot.MainHand)
     {
-        private readonly List<SpellModule.Passive> _passiveSpells = new List<SpellModule.Passive>();
-
-        public Weapon(string title, ItemTypes itemType) : base(title, itemType, ItemSlot.MainHand)
-        {}
-
-        public void AddPassiveSpell(SpellModule.Passive passiveSpell)
-        {
-            _passiveSpells.Add(passiveSpell);
-        }
-
-        public override Dictionary<string, string> Look()
-        {
-            var dict = new Dictionary<string, string>
-            {
-                { "Title", Name },
-                { "Damage", $"{0}" } // Arrumar o dano no look
-            };
-            foreach (var p in _passiveSpells)
-            {
-                dict.Add($"Passive: {p.Name}", $"{p.Description}");
-            }
-            return dict;
-        }
     }
 
-    public class Equipment : Wearable
+    public class Equipment(string name, ItemTypes itemType, ItemSlot itemSlot) : Wearable(name, itemType, itemSlot)
     {
-        public Equipment(string name, ItemTypes itemType, ItemSlot itemSlot) : base(name, itemType, itemSlot)
-        {}
     }
 
-    public class Sword : Weapon
+    public class Sword(string title) : Weapon(title, ItemTypes.Sword)
     {
-        public Sword(string title) : base(title, ItemTypes.Sword){}
     }
 
-    public class Axe : Weapon
+    public class Axe(string title) : Weapon(title, ItemTypes.Axe)
     {
-        public Axe(string title) : base(title, ItemTypes.Axe){}
     }
 
-    public class Club : Weapon
+    public class Club(string title) : Weapon(title, ItemTypes.Club)
     {
-        public Club(string title) : base(title, ItemTypes.Sword){}
     }
 
-    public class TwoHandedSword : Weapon
+    public class TwoHandedSword(string title) : Weapon(title, ItemTypes.ThSword)
     {
-        public TwoHandedSword(string title) : base(title, ItemTypes.ThSword){}
     }
 
-    public class TwoHandedAxe : Weapon
+    public class TwoHandedAxe(string title) : Weapon(title, ItemTypes.ThAxe)
     {
-        public TwoHandedAxe(string title) : base(title, ItemTypes.ThAxe){}
     }
 
-    public class TwoHandedClub : Weapon
+    public class TwoHandedClub(string title) : Weapon(title, ItemTypes.ThClub)
     {
-        public TwoHandedClub(string title) : base(title, ItemTypes.ThClub){}
     }
 
-    public class Shield : Equipment
+    public class Shield(string name) : Equipment(name, ItemTypes.Shield, ItemSlot.OffHand)
     {
-        public Shield(string name) : base(name, ItemTypes.Shield, ItemSlot.OffHand) {}
     }
 
-    public class Helmet : Equipment
+    public class Helmet(string name) : Equipment(name, ItemTypes.Helmet, ItemSlot.Head)
     {
-        public Helmet(string name) : base(name, ItemTypes.Helmet, ItemSlot.Head) {}
     }
 
-    public class Armor : Equipment
+    public class Armor(string name) : Equipment(name, ItemTypes.Armor, ItemSlot.Chest)
     {
-        public Armor(string name) : base(name, ItemTypes.Armor, ItemSlot.Chest) {}
     }
 
-    public class Legs : Equipment
+    public class Legs(string name) : Equipment(name, ItemTypes.Legs, ItemSlot.Legs)
     {
-        public Legs(string name) : base(name, ItemTypes.Legs, ItemSlot.Legs) {}
     }
 
-    public class Boots : Equipment
+    public class Boots(string name) : Equipment(name, ItemTypes.Boots, ItemSlot.Boots)
     {
-        public Boots(string name) : base(name, ItemTypes.Boots, ItemSlot.Boots) {}
     }
 
-    public class Consumable : Item
+    public class Consumable(string title) : Item(title, ObjectTypes.Usable, ItemTypes.Consumable)
     {
-        public Consumable(string title) : base(title, ObjectTypes.Usable, ItemTypes.Consumable){}
     }
 
-    public abstract class Potion : Consumable
+    public abstract class Potion(string title) : Consumable(title)
     {
-        public Potion(string title) : base(title){}
-
         public virtual int Formula(Character character)
         {
             return 0;

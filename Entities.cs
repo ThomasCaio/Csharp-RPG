@@ -6,45 +6,43 @@ using static System.Linq.Enumerable;
 using RPG;
 using Newtonsoft.Json;
 using System.Text.Json.Serialization;
+using System.Runtime.Serialization;
 
 public enum CreatureType {
     Character,
     Monster
 }
 
-public abstract class Creature {
+public abstract class Creature(string name, CreatureType type)
+{
     private int maxHealth = 100;
     private int health = 100;
 
-    public string Name { get; set; }
-    public CreatureType Type { get; set; }
+    public string Name { get; set; } = name;
+    public CreatureType Type { get; set; } = type;
     public int BaseDamage { get; set; } = 1;
     public int BaseDefense { get; set; } = 0;
-    public List<Passive> Passives { get; } = new List<Passive>();
-    public List<Effect> Effects { get; } = new List<Effect>();
-
+    public List<Passive> Passives { get; } = [];
+    public List<Effect> Effects { get; } = [];
+    [Newtonsoft.Json.JsonIgnore]
     public int Health {
         get { return health; }
-        // set { health = Math.Max(0, Math.Min(value, maxHealth)); } // Jeito correto, porém da bug pela ordem do deserialize que carrega primeiro o max health.
-        set
-        {
-            if (value >= MaxHealth)
-            {
-                health = MaxHealth;
-            }
-            else {
-                health = Math.Max(0, value);
-            }
-        }
+        set { health = Math.Max(0, Math.Min(value, maxHealth)); }
     }
-
+    [JsonProperty(nameof(Health))]
+    private int DeserializedHealth { get; set; }
+    [OnDeserialized]
+    private void OnDeserializedMethod(StreamingContext context)
+    {
+        Health = DeserializedHealth;
+    }
     public int MaxHealth {
         get { return maxHealth; }
         set {
             if (value != maxHealth)
             {
                 double healthPercentage = Math.Round((double)health / maxHealth, 2);
-                Logging.Debug.Write($"{healthPercentage}", "health");
+                if (Game.Debug) Logging.Debug.Write($"{healthPercentage}", "health");
                 maxHealth = value;
                 health = (int)Math.Min(healthPercentage * maxHealth, maxHealth);
             }
@@ -62,10 +60,12 @@ public abstract class Creature {
     public virtual int WaterResistance {get; set;}
     public virtual int AirResistance {get; set;}
 
-    public virtual int TotalDamage { get { return (BaseDamage + Damage) * DamageModifier; } }
+    [Newtonsoft.Json.JsonIgnore]
+    public virtual int TotalDamage => (BaseDamage + Damage) * DamageModifier;
     public virtual int DamageModifier { get { return 1; } }
 
-    public virtual int TotalDefense { get { return (BaseDefense + Defense) * DefenseModifier; } }
+    [Newtonsoft.Json.JsonIgnore]
+    public virtual int TotalDefense => (BaseDefense + Defense) * DefenseModifier;
     public virtual int DefenseModifier { get { return 1; } }
 
     public List<Passive> OnHitPassives { get { return Passives.Where(p => p.Type == PassiveType.OnHit).ToList(); } }
@@ -73,16 +73,11 @@ public abstract class Creature {
     public string EffectList {
         get { return Effects.Count == 0 ? "" : string.Join(", ", Effects); }
     }
-
-    public Creature(string name, CreatureType type) {
-        Name = name;
-        Type = type;
-    }
 }
 
 
 public class Inventory {
-    public List<Item> Items = new List<Item>();
+    public List<Item> Items = [];
     public int InventorySize = 20;
     public Inventory() {}
     public void Add(Item item) {
@@ -105,12 +100,12 @@ public class Inventory {
     }
 }
 
-public class Character : Creature
+public class Character(string name) : Creature(name, CreatureType.Character)
 {
     public int NextLevel = 100;
     public int _experience = 0;
 
-    public List<Spell> Spellbook = new List<Spell>();
+    public List<Spell> Spellbook = [];
     public int Experience {
         get{return Convert.ToInt32(_experience);}
         set{
@@ -125,7 +120,7 @@ public class Character : Creature
 
     public int Level = 1;
     public int Gold = 0;
-    public Dictionary<ItemSlot, Wearable?> Body = new Dictionary<ItemSlot, Wearable?>
+    public Dictionary<ItemSlot, Wearable?> Body = new()
     {
         [ItemSlot.Head] = null,
         [ItemSlot.Chest] = null,
@@ -134,12 +129,9 @@ public class Character : Creature
         [ItemSlot.MainHand] = null,
         [ItemSlot.OffHand] = null,
     };
-    public Inventory Inventory = new Inventory();
+    public Inventory Inventory = new();
 
-    public Dictionary<string, int> Scores = new Dictionary<string, int>();
-    public Character(string name) : base(name, CreatureType.Character) {
-        
-    }
+    public Dictionary<string, int> Scores = [];
 
     public void LevelUP() {
         Level++;
@@ -198,14 +190,10 @@ public class Character : Creature
     }
 }
 
-public class Monster : Creature {
+public class Monster(string name) : Creature(name, CreatureType.Monster) {
 
-    public Tuple<int, int> DropGold;
-    public int DropExp;
-    public Monster(string name) : base(name, CreatureType.Monster) {
-        DropGold = new Tuple<int, int>(0, 0);
-        DropExp = 0;
-    }
+    public Tuple<int, int> DropGold = new(0, 0);
+    public int DropExp = 0;
 
     public int GetGoldDrop() {
         int value = RPG.Game.RNG.Next(DropGold.Item1, DropGold.Item2);

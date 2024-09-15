@@ -1,10 +1,16 @@
-namespace Logging;
-
-public static class Debug
+namespace Logging
 {
-    static string filePath = "tests";
+    public static class Debug
+    {
+        static readonly string filePath = "tests";
 
-    public static void Write(string data="", string filename="main"){
-        File.AppendAllText($"{filePath}/{filename}.test", data + Environment.NewLine);
+        public static void Write(string data = "", string filename = "main")
+        {
+            if (!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
+            File.AppendAllText($"{filePath}/{filename}.test", data + Environment.NewLine);
+        }
     }
 }

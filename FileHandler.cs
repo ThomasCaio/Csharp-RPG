@@ -19,6 +19,7 @@ public static class FileHandler
         string path = "./saves";
         Directory.CreateDirectory(path);
         string character = Serializers.Character(c);
+        Logging.Debug.Write($"{character}", $"{c.Name}");
         File.WriteAllText($"{path}/{c.Name}.data", character);
     }
 

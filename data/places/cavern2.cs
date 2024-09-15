@@ -3,21 +3,22 @@ using EntityModule;
 using Monsters.All;
 
 public class Cavern2 : HuntingPlace {
-    public Cavern2(RPG.Game parent) : base("Cavern", parent) {
-        NormalMonsters = new List<Monster> {
+    public Cavern2(RPG.Game parent) : base("Cavern 2", parent) {
+        RequiredLevel = 10;
+        NormalMonsters = [
             new Dwarf(),
             new DwarfSoldier()
-        };
+        ];
 
-        MediumMonsters = new List<Monster> {
+        MediumMonsters = [
             new DwarfSoldier(),
             new DwarfGuard()
-        };
+        ];
 
-        HardMonsters = new List<Monster> {
+        HardMonsters = [
             new DwarfGuard(),
             new DwarfMagician(),
 
-        };
+        ];
     }
 }

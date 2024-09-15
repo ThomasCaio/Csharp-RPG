@@ -12,14 +12,17 @@ public class DamageSet {
     public int TotalDamage() {
         int Dmg = 0;
         foreach (int d in _damages.Values) {
+            if (d <= 0) {
+                continue;
+            }
             Dmg += d;
         }
         return Dmg;
     }
 
     public double GetElement(Element element) {
-        if (_damages.ContainsKey(element)) {
-            return _damages[element];
+        if (_damages.TryGetValue(element, out double value)) {
+            return value;
         } else {return 0;}
     }
 
@@ -55,7 +58,7 @@ public class Damage {
 
 
 public static class Combat {
-    public static Random RNG = new Random();
+    public static Random RNG = new();
 
     public static void Attack(Creature source, Creature target) {
         DamageSet damage;
@@ -98,7 +101,7 @@ public static class AttackSystem {
     }
     public static void Resistance(Creature source, Creature target, DamageSet damage, bool showLog=true) {
         var physicalDamage = damage.GetElement(Element.Physical);
-        var magicalDaamge = damage.GetElement(Element.Magical);
+        var magicalDamage = damage.GetElement(Element.Magical);
 
         if (target is Character character)
         {
@@ -109,7 +112,7 @@ public static class AttackSystem {
             {
                 if (character.PhysicalResistance > 0)
                 {
-                    RPG.Game.Log.Add($"DEBUG: {target.Name}'s physical resistance reduces the damage by {physical_resistance * 100:F1}%.");
+                    RPG.Game.Log.Add($"DEBUG: {target.Name}'s physical resistance reduces the damage by {physical_resistance:F1}%.");
                 }
             }
         }
@@ -117,7 +120,6 @@ public static class AttackSystem {
     }
     public static void Block(Creature source, Creature target, DamageSet damage, bool showLog=true) {
         var physicalDamage = damage.GetElement(Element.Physical);
-        var magicalDamage = damage.GetElement(Element.Magical);
 
         if (target is Character character)
         {
@@ -163,9 +165,7 @@ public static class AttackSystem {
 
     public static void Death(Creature source, Creature target, DamageSet damage) {
         RPG.Game.Log.Add($"{target.Name} dies.");
-        if ((source is Character) && (target is Monster)){
-        var character = (Character)source;
-        var monster = (Monster)target;
+        if ((source is Character character) && (target is Monster monster)){
 
         if (monster.GetGoldDrop() > 0) {
             var gold = monster.GetGoldDrop();

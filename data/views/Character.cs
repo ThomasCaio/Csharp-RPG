@@ -22,7 +22,7 @@ public class CharacterView : View {
         table.AddRow(new Text("Max Health"), new Text($"{player.MaxHealth}"));
         // table.AddRow(new Text("Max Mana"), new Text($"{player.MaxMana}"));
         table.AddRow(new Text("Damage"), new Text($"{player.TotalDamage}"));
-        table.AddRow(new Text("Defense"), new Text($"{player.Defense}"));
+        table.AddRow(new Text("Defense"), new Text($"{player.TotalDefense}"));
         table.AddRow(new Text("Armor"), new Text($"{player.Armor}"));
         table.AddRow(new Text("Physical Resistance"), new Text($"{player.PhysicalResistance}"));
         table.AddRow(new Text("Fire Resistance"), new Text($"{player.FireResistance}"));

@@ -47,9 +47,11 @@ public class HuntingPlacesView : View {
 
         var selection = new SelectionPrompt<string>();
         selection.Title("Select a hunting place:");
-        if (Parent.Places.Keys.Contains("Last Hunt")) {
-            selection.AddChoice($"Last Hunt ({Parent.Places["Last Hunt"].Name})");
+        if (Parent.Places.TryGetValue("Last Hunt", out Place? value)) {
+            selection.AddChoice($"Last Hunt ({value.Name})");
         }
+        //TODO: Criar os bosses antes de colocar no jogo.
+
         // foreach (var hunt in Parent.Places.Values)
         // {
         //     if (player != null)
@@ -61,18 +63,23 @@ public class HuntingPlacesView : View {
 
         //     }
         // }
+        
         foreach (string hunt in Parent.Places.Keys) {
             if (hunt.Contains("Last Hunt")) {
                 continue;
             }
-            selection.AddChoice(hunt);
+            HuntingPlace huntingPlace = (HuntingPlace)Parent.Places[hunt];
+            if (huntingPlace.RequiredLevel <= player!.Level)
+            {
+                selection.AddChoice(hunt);
+            }
         }
         selection.AddChoice("Back");
         string option = AnsiConsole.Prompt(selection);
         if (option == "Back") {
             return;
         }
-        global::Logging.Debug.Write($"Hunt option: {option}");
+        Debug.Write($"Hunt option: {option}");
         if (option.Contains("Last Hunt"))
         {
             option = "Last Hunt";
@@ -86,7 +93,7 @@ public class HuntingPlacesView : View {
         if (player != null && Parent.GameViews["Fight"] is FightView view)
         {
             int placeScore = player.Scores.GetValueOrDefault(place.Name, 0);
-            global::Logging.Debug.Write($"Place: {place}");
+            Debug.Write($"Place: {place}");
             view.Setup(new EntityModule.Party(player), place.NewParty(placeScore), place);
             view.Render();
             UpdateLastHunt(place);
@@ -95,7 +102,7 @@ public class HuntingPlacesView : View {
 
     public void UpdateLastHunt(HuntingPlace place)
     {
-        if (!(Parent.Places.Keys.Contains("Last Hunt")))
+        if (!Parent.Places.ContainsKey("Last Hunt"))
         {
             Parent.Places.Add("Last Hunt", place);
         }

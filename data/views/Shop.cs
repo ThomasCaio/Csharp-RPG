@@ -18,7 +18,7 @@ public class ShopView : View {
         var selection = new SelectionPrompt<string>()
             .Title("What would you like to buy?")
             .PageSize(10)
-            .AddChoices(new[] {"Equipments", "Weapons", "Shields", "Consumables", "Back"});
+            .AddChoices(["Equipments", "Weapons", "Shields", "Consumables", "Back"]);
 
         var option = AnsiConsole.Prompt(selection);
 
@@ -34,7 +34,7 @@ public class ShopView : View {
             var s = new SelectionPrompt<string>()
             .Title("What would you like to buy?")
             .PageSize(10)
-            .AddChoices(new[] {"Helmet", "Armor", "Legs", "Boots", "Back"});
+            .AddChoices(["Helmet", "Armor", "Legs", "Boots", "Back"]);
             subOption = AnsiConsole.Prompt(s);
             if (subOption == "Back") {
                 Render();
@@ -46,7 +46,7 @@ public class ShopView : View {
             var s = new SelectionPrompt<string>()
             .Title("What would you like to buy?")
             .PageSize(10)
-            .AddChoices(new[] {"Sword", "Axe", "Club", "Back"});
+            .AddChoices(["Sword", "Axe", "Club", "Back"]);
             subOption = AnsiConsole.Prompt(s);
             if (subOption == "Back") {
                 Render();
@@ -109,6 +109,16 @@ public class ShopView : View {
     }
 
     public void Sell(Item item) {
-        // TODO: Implement selling items
+        var player = Parent.Player;
+        if (player != null)
+        {
+            if (AnsiConsole.Confirm($"Do you really want to sell {item.Name} for ${item.SellPrice}?"))
+            {
+                player.Inventory.Remove(item);
+                var sellPrice = (double)item.BuyPrice / 2;
+                player.Gold += (int)Math.Round(sellPrice, 0);
+                Log.AddEvent($"You sold {item.Name} for ${sellPrice}.");
+            }
+        }
     }
 }

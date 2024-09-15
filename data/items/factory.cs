@@ -1,5 +1,6 @@
 namespace ItemModule.Factory;
 using ItemModule.All;
+using RPG;
 
 public class ItemFactory
     {
@@ -34,9 +35,24 @@ public class ItemFactory
 
         private void RegisterItems()
         {
+            // DEBUG
+            if (RPG.Game.Debug)
+            {
+                this.RegisterItem(new TestSword());
+            }
+
             // Weapon
+            // Axes
+            
+
+            // Swords
             this.RegisterItem(new Knife());
-            this.RegisterItem(new TestSword());
+            this.RegisterItem(new LongSword());
+            this.RegisterItem(new ShortSword());
+
+            // Clubs
+            this.RegisterItem(new Mace());
+            this.RegisterItem(new WarHammer());
 
             // Equipments
             this.RegisterItem(new LeatherHelmet());

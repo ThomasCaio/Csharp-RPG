@@ -4,18 +4,19 @@ using Monsters.All;
 
 public class Cavern : HuntingPlace {
     public Cavern(RPG.Game parent) : base("Cavern", parent) {
-        NormalMonsters = new List<Monster> {
+        RequiredLevel = 5;
+        NormalMonsters = [
             new PoisonRat()
-        };
+        ];
 
-        MediumMonsters = new List<Monster> {
+        MediumMonsters = [
             new PoisonSpider(),
             new Dwarf(),
-        };
+        ];
 
-        HardMonsters = new List<Monster> {
+        HardMonsters = [
             new Dwarf(),
             new DwarfSoldier(),
-        };
+        ];
     }
 }
